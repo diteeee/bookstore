@@ -26,7 +26,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (initialData?.docs) {
-      setBooks(initialData.docs);
+      setBooks(initialData.docs.slice(0, 20)); // Limit books to 20 for better performance
     }
   }, [initialData]);
 
@@ -35,18 +35,18 @@ const HomePage = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center py-16 px-6">
+    <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
       {/* Hero Section */}
       <motion.div
-        initial={{ opacity: 0, y: -50 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="text-center mb-16 max-w-2xl"
+        transition={{ duration: 0.8 }}
+        className="text-center mb-14 max-w-2xl"
       >
-        <h1 className="text-5xl font-bold text-gray-800 mb-6">
+        <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
           Welcome to Our Bookstore
         </h1>
-        <p className="text-lg text-gray-600 leading-relaxed">
+        <p className="text-gray-600 text-lg leading-relaxed">
           Explore our curated collection of books spanning every genre, and
           discover stories that will inspire and captivate you.
         </p>
@@ -60,7 +60,7 @@ const HomePage = () => {
       </motion.div>
 
       {/* Features Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl mb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl mb-14">
         <Card
           icon={Rocket}
           title="Fast Delivery"
@@ -79,46 +79,46 @@ const HomePage = () => {
       </div>
 
       {/* Books Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-20 bg-gray-200 w-full max-w-6xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-7xl">
         {loading ? (
           <div className="col-span-full flex justify-center">
             <CircularProgress />
           </div>
         ) : (
           books.map((book) => (
-            <motion.section
+            <motion.div
               key={book.key}
-              className="bg-white rounded-xl p-6 shadow-md text-center"
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1 }}
+              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
             >
-              <h2 className="text-2xl font-bold mb-2 text-indigo-600 line-clamp-2 uppercase">
+              <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
                 {book.title}
               </h2>
-              <p className="text-gray-700 mb-2">
-                Author: {book.author_name?.join(", ") || "Unknown"}
+              <p className="text-gray-500 mb-4 italic">
+                {book.author_name?.join(", ") || "Unknown Author"}
               </p>
-              <p className="text-gray-600 italic">
+              <p className="text-gray-600 text-sm mb-6">
                 First Published: {book.first_publish_year || "N/A"}
               </p>
               <button
                 onClick={() => handleDelete(book.key)}
-                className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
                 Delete Book
               </button>
-            </motion.section>
+            </motion.div>
           ))
         )}
       </div>
 
       {/* Contact Section */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
-        className="text-center mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center mt-14"
       >
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Have Questions?

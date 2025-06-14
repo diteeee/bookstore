@@ -14,7 +14,7 @@ export function MainLayout(props: Props) {
                 <title>{props.name}</title>
             </Head>
             <Header />
-            <main>{props.children}</main>
+                <main>{props.children}</main>
             <Footer />
         </div>
     );

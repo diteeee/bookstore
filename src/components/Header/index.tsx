@@ -18,6 +18,10 @@ export function Header() {
             name: "Contact Us",
             pathName: "/contact",
         },
+        {
+            name: "Blogs",
+            pathName: "/blogs",
+        },
     ];
     return (
         <div className="py-2 fixed z-50 bg-white border-b w-full transition-all duration-300">

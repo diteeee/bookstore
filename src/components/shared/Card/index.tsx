@@ -1,26 +1,38 @@
 import { motion } from "framer-motion";
 
 interface Props {
-    icon: any;
-    title: string;
-    description: string;
+  icon: any;
+  title: string;
+  description: string;
 }
 
 const Card = (props: Props) => {
-    const { icon: Icon, title, description } = props;
+  const { icon: Icon, title, description } = props;
 
-    return (
-        <motion.div
-            className="bg-gradient-to-br from-sage-100 to-cream-100 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            whileHover={{ scale: 1.05 }}
-        >
-            {Icon && <Icon className="text-teal-600 w-12 h-12 mb-4 mx-auto mt-6" />}
-            <div className="p-6">
-                <h3 className="text-2xl font-semibold text-teal-800 text-center">{title}</h3>
-                <p className="text-gray-700 mt-2 text-center">{description}</p>
-            </div>
-        </motion.div>
-    );
+  return (
+    <motion.div
+      className="relative bg-white border border-gray-300 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+      whileHover={{ scale: 1.03 }}
+    >
+      {/* Decorative Strip */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-600 via-gray-500 to-gray-400"></div>
+
+      {/* Content */}
+      <div className="p-6 flex flex-col items-center">
+        {Icon && (
+          <div className="bg-gray-100 p-3 rounded-full mb-4">
+            <Icon className="text-gray-600 w-8 h-8" />
+          </div>
+        )}
+        <h3 className="text-lg font-serif font-semibold text-gray-800 text-center mb-2">
+          {title}
+        </h3>
+        <p className="text-gray-600 text-sm text-center">
+          {description}
+        </p>
+      </div>
+    </motion.div>
+  );
 };
 
 export default Card;

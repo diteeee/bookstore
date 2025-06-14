@@ -1,0 +1,70 @@
+import React from "react";
+import { motion } from "framer-motion";
+import Button from "@/components/shared/Button";
+import Card from "@/components/shared/Card";
+import { Rocket, BarChart, ShieldCheck } from "lucide-react";
+
+const HomePage = () => {
+  return (
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center py-16 px-6">
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="text-center mb-16 max-w-2xl"
+      >
+        <h1 className="text-5xl font-bold text-gray-800 mb-6">Welcome to Our Bookstore</h1>
+        <p className="text-lg text-gray-600 leading-relaxed">
+          Explore our curated collection of books spanning every genre, and discover stories that will inspire and captivate you.
+        </p>
+        <div className="mt-8">
+          <Button
+            text="Discover Our Collection"
+            variant="primary"
+            onClick={() => alert("Redirecting to collections...")}
+          />
+        </div>
+      </motion.div>
+
+      {/* Features Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl mb-16">
+        <Card
+          icon={Rocket}
+          title="Fast Delivery"
+          description="Get your books delivered swiftly and securely to your doorstep."
+        />
+        <Card
+          icon={BarChart}
+          title="Bestsellers"
+          description="Browse our collection of top-selling books loved by readers worldwide."
+        />
+        <Card
+          icon={ShieldCheck}
+          title="Secure Shopping"
+          description="Enjoy a safe and secure shopping experience with us."
+        />
+      </div>
+
+      {/* Contact Section */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1 }}
+        className="text-center"
+      >
+        <h2 className="text-3xl font-semibold text-gray-800 mb-4">Have Questions?</h2>
+        <p className="text-lg text-gray-600 mb-6">
+          Contact our team for any inquiries or assistance.
+        </p>
+        <Button
+          text="Contact Us"
+          variant="secondary"
+          onClick={() => alert("Redirecting to contact page...")}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
+export default HomePage;

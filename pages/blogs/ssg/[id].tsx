@@ -1,9 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import Image from "next/image";
 
 interface Book {
   title: string;
   description?: string | { value: string };
   subjects?: string[];
+  covers?: number[];
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -27,7 +29,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const book: Book = await res.json();
 
   return {
-    props: { book, id }, // Pass the id here
+    props: { book, id },
     revalidate: 3600,
   };
 };
@@ -42,18 +44,27 @@ export default function BookPage({ book, id }: { book: Book; id: string }) {
   const coverId = book.covers?.[0];
   const coverUrl = coverId
     ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
-    : "https://via.placeholder.com/200x300?text=No+Cover+Available"; // Fallback URL
+    : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-cream-100 to-sage-200 py-16 px-6 flex justify-center">
       <div className="max-w-5xl bg-white rounded-xl shadow-lg p-10 flex flex-col md:flex-row gap-8">
         {/* Book Cover */}
-        <div className="flex-shrink-0 w-64 h-96 rounded-lg overflow-hidden shadow-md border border-gray-200">
-          <img
-            src={coverUrl}
-            alt={book.title}
-            className="w-full h-full object-cover"
-          />
+        <div className="flex-shrink-0 w-64 h-96 rounded-lg overflow-hidden shadow-md border border-gray-200 relative">
+          {coverUrl ? (
+            <Image
+              src={coverUrl}
+              alt={book.title}
+              fill
+              style={{ objectFit: "cover" }}
+              sizes="256px"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+              No Cover Available
+            </div>
+          )}
         </div>
 
         {/* Book Details */}
@@ -66,7 +77,7 @@ export default function BookPage({ book, id }: { book: Book; id: string }) {
             {description}
           </p>
 
-          {book.subjects && (
+          {book.subjects && book.subjects.length > 0 && (
             <div className="mt-4">
               <h3 className="text-teal-600 font-semibold mb-2">Subjects</h3>
               <div className="flex flex-wrap gap-2">
@@ -92,5 +103,3 @@ export default function BookPage({ book, id }: { book: Book; id: string }) {
     </div>
   );
 }
-
-

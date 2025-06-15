@@ -102,12 +102,13 @@ const HomePage = () => {
               <p className="text-gray-600 text-sm mb-6">
                 First Published: {book.first_publish_year || "N/A"}
               </p>
-              <button
-                onClick={() => handleDelete(book.key)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                Delete Book
-              </button>
+              <div className="flex flex-col space-y-2 items-center">
+                <Button
+                  text="Delete"
+                  variant="danger"
+                  onClick={() => handleDelete(book.key)}
+                />
+              </div>
             </motion.div>
           ))
         )}

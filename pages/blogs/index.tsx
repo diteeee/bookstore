@@ -61,17 +61,16 @@ export default function Blogs({ books }: BlogsProps) {
 
   const handleDeleteBlog = async (id: string) => {
     const confirmed = confirm(
-      "A jeni i sigurt që dëshironi ta fshini këtë blog?"
+      "Do you want to delete this book?"
     );
     if (!confirmed) return;
 
     try {
       await remove(`/api/blogs/${id}`);
-      alert("Blogu u fshi me sukses.");
-      // Instead of reload, refetch data to update UI
-      refetch();
+      alert("Book deleted successfully.");
+      window.location.reload();
     } catch (error) {
-      alert("Gabim gjatë fshirjes së blogut");
+      alert("Error deleting book.");
       console.error(error);
     }
   };
@@ -98,9 +97,7 @@ export default function Blogs({ books }: BlogsProps) {
           </p>
           <div className="flex flex-col space-y-2 items-center">
             <Link href={`/blogs/ssg/${book.key}`} passHref legacyBehavior>
-              <a>
-                <Button text="Read More" variant="tertiary" />
-              </a>
+              <Button text="Read More" variant="tertiary" />
             </Link>
             <Button
               text="Delete"

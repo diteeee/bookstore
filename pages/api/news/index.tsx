@@ -1,5 +1,4 @@
-
-import { createBlog, getBlogs } from "@/api/services/Blog";
+import { createNews, getNews } from "@/api/services/News";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -8,8 +7,8 @@ export default async function handler(
 ) {
     if (req.method === "POST") {
         try {
-        const newBlog = req.body;
-        const result = await createBlog(newBlog);
+        const newNews = req.body;
+        const result = await createNews(newNews);
         res.status(201).json(result);
     } catch (error) {
         res.status(500).json(error);
@@ -17,8 +16,8 @@ export default async function handler(
     }
     if (req.method === "GET") {
         try {
-            const blogs = await getBlogs();
-            res.status(200).json(blogs);
+            const news = await getNews();
+            res.status(200).json(news);
         } catch (error) {
             res.status(500).json(error);
         }

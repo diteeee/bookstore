@@ -1,4 +1,4 @@
-import { deleteBlog, getBlog, updateBlog } from "@/api/services/Blog";
+import { deleteNews, getSingleNews, updateNews } from "@/api/services/News";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -7,16 +7,16 @@ export default async function handler(
 ) {
     if (req.method === "GET") {
         try {
-            const blog = await getBlog(id as string);
-            res.status(200).json(blog);
+            const news = await getSingleNews(id as string);
+            res.status(200).json(news);
         } catch (error) {
             res.status(500).json(error);
         }
     }
     if (req.method === "PUT") {
         try {
-            const newBlog = req.body;
-            const result = await updateBlog(req.query.id as string, newBlog);
+            const newNews = req.body;
+            const result = await updateNews(req.query.id as string, newNews);
             res.status(200).json(result); // Use 200 for updates
         } catch (error) {
             res.status(500).json(error);
@@ -24,8 +24,8 @@ export default async function handler(
     }
     if (req.method === "DELETE") {
         try {
-            const blog = await deleteBlog(req.query.id as string);
-            res.status(200).json(blog);
+            const news = await deleteNews(req.query.id as string);
+            res.status(200).json(news);
         } catch (error) {
             res.status(500).json(error);
         }

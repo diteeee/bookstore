@@ -22,6 +22,10 @@ export function Header() {
             name: "Blogs",
             pathName: "/blogs",
         },
+        {
+            name: "News",
+            pathName: "/news",
+        },
     ];
     return (
         <div className="py-2 fixed z-50 bg-white border-b w-full transition-all duration-300">

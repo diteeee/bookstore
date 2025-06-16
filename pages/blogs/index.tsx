@@ -6,6 +6,7 @@ import React, { useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import useFetch from "hooks/useFetch";
 import CircularProgress from "@mui/material/CircularProgress";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 interface Book {
   key: string; // e.g. "/works/OL45883W"
@@ -47,11 +48,44 @@ export default function Blogs({ books }: BlogsProps) {
     refetch,
   } = useFetch<Blog[]>("/api/blogs");
 
-  // Load More: just disables after initial 20, as we only have 20 books
-  // Prevent duplication by disabling after first click (optional)
+  // Add to Cart function
+  const handleAddToCart = async (book: Book | Blog) => {
+    try {
+      const payload =
+        "key" in book
+          ? {
+              source: "openLibrary",
+              bookKey: book.key,
+              title: book.title,
+              authorName: book.author_name,
+            }
+          : {
+              source: "database",
+              bookId: book._id,
+              title: book.title,
+              authorName: "body" in book ? book.body : "Unknown Author",
+            };
+
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add to cart");
+      }
+
+      alert("Book added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Error adding to cart. Please try again.");
+    }
+  };
+
   const loadMoreBooks = () => {
-    // In your current dataset, no more books to add.
-    // So just disable or show alert.
     alert("No more books to load.");
   };
 
@@ -60,9 +94,7 @@ export default function Blogs({ books }: BlogsProps) {
   };
 
   const handleDeleteBlog = async (id: string) => {
-    const confirmed = confirm(
-      "Do you want to delete this book?"
-    );
+    const confirmed = confirm("Do you want to delete this book?");
     if (!confirmed) return;
 
     try {
@@ -75,44 +107,49 @@ export default function Blogs({ books }: BlogsProps) {
     }
   };
 
-  // Memoized book cards for better performance
   const bookCards = useMemo(
-    () =>
-      visibleBooks.map((book) => (
-        <motion.div
-          key={book.key}
-          className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
-          initial={prefersReducedMotion ? {} : { opacity: 0 }}
-          animate={prefersReducedMotion ? {} : { opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
+  () =>
+    visibleBooks.map((book) => (
+      <motion.div
+        key={book.key}
+        className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center relative"
+        initial={prefersReducedMotion ? {} : { opacity: 0 }}
+        animate={prefersReducedMotion ? {} : { opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
+          {book.title}
+        </h2>
+        <p className="text-gray-500 mb-4 italic">
+          {book.author_name?.join(", ") || "Unknown Author"}
+        </p>
+        <p className="text-gray-600 text-sm mb-6 line-clamp-3">
+          First Published: {book.first_publish_year || "N/A"}
+        </p>
+        <div className="flex flex-col space-y-2 items-center">
+          <Link href={`/blogs/ssg/${book.key}`} passHref legacyBehavior>
+            <Button text="Read More" variant="tertiary" />
+          </Link>
+          <Button
+            text="Delete"
+            variant="danger"
+            onClick={() => handleDelete(book.key)}
+          />
+        </div>
+        {/* Cart Icon */}
+        <button
+          className="absolute top-4 right-4 bg-blue-900 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition duration-300"
+          onClick={() => handleAddToCart(book)}
         >
-          <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
-            {book.title}
-          </h2>
-          <p className="text-gray-500 mb-4 italic">
-            {book.author_name?.join(", ") || "Unknown Author"}
-          </p>
-          <p className="text-gray-600 text-sm mb-6 line-clamp-3">
-            First Published: {book.first_publish_year || "N/A"}
-          </p>
-          <div className="flex flex-col space-y-2 items-center">
-            <Link href={`/blogs/ssg/${book.key}`} passHref legacyBehavior>
-              <Button text="Read More" variant="tertiary" />
-            </Link>
-            <Button
-              text="Delete"
-              variant="danger"
-              onClick={() => handleDelete(book.key)}
-            />
-          </div>
-        </motion.div>
-      )),
-    [visibleBooks, prefersReducedMotion]
-  );
+          <ShoppingCartIcon />
+        </button>
+      </motion.div>
+    )),
+  [visibleBooks, prefersReducedMotion]
+);
 
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
-      {/* Header */}
       <motion.div
         initial={prefersReducedMotion ? {} : { opacity: 0, y: -20 }}
         animate={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
@@ -128,22 +165,18 @@ export default function Blogs({ books }: BlogsProps) {
         </p>
       </motion.div>
 
-      {/* Add Blog Button */}
       <div className="mb-8">
         <Link href="/create/blog" passHref>
           <Button text="Add Blog" variant="tertiary" />
         </Link>
       </div>
 
-      {/* Show database blogs or books */}
-      {blogsLoading ? (
-        <CircularProgress />
-      ) : blogsData && blogsData.length > 0 ? (
+      {blogsData && blogsData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-7xl">
           {blogsData.map((post: Blog) => (
             <motion.div
               key={post._id}
-              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
+              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center relative"
               initial={prefersReducedMotion ? {} : { opacity: 0 }}
               animate={prefersReducedMotion ? {} : { opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.3 }}
@@ -166,6 +199,13 @@ export default function Blogs({ books }: BlogsProps) {
                   onClick={() => handleDeleteBlog(post._id)}
                 />
               </div>
+              {/* Cart Icon */}
+              <button
+                className="absolute top-4 right-4 bg-blue-900 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition duration-300"
+                onClick={() => handleAddToCart(post)}
+              >
+                <ShoppingCartIcon />
+              </button>
             </motion.div>
           ))}
         </div>
@@ -175,13 +215,12 @@ export default function Blogs({ books }: BlogsProps) {
         </div>
       )}
 
-      {/* Load More Button */}
       <div className="mt-8">
         <Button
           text="Load More"
           variant="quarternary"
           onClick={loadMoreBooks}
-          disabled={true} // disable because no more books to load
+          disabled={true}
         />
       </div>
     </div>

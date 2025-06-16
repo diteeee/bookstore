@@ -1,8 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
+import emailjs from "emailjs-com";
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  emailjs
+    .send(
+      "service_erwa8rf", // Replace with your EmailJS service ID
+      "template_juz01dr", // Replace with your EmailJS template ID
+      formData, // Use formData directly
+      "2idW1OYVOZZjTPYZw" // Replace with your EmailJS public key
+    )
+    .then(
+      (response) => {
+        alert("Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" }); // Reset form
+      },
+      (error) => {
+        console.error("Error sending message:", error);
+        alert("Failed to send message. Please try again.");
+      }
+    )
+    .finally(() => setIsSubmitting(false));
+};
+
+
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
       {/* Header Section */}
@@ -29,13 +67,16 @@ const ContactPage = () => {
           whileHover={{ scale: 1.02 }}
         >
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h2>
-          <form className="flex flex-col space-y-6">
+          <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
             <label className="flex flex-col">
               <span className="text-gray-700 font-semibold mb-1">Name</span>
               <input
                 type="text"
+                name="name"
                 placeholder="Your Name"
                 className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={formData.name}
+                onChange={handleChange}
                 required
               />
             </label>
@@ -44,8 +85,11 @@ const ContactPage = () => {
               <span className="text-gray-700 font-semibold mb-1">Email</span>
               <input
                 type="email"
+                name="email"
                 placeholder="your.email@example.com"
                 className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={formData.email}
+                onChange={handleChange}
                 required
               />
             </label>
@@ -53,18 +97,24 @@ const ContactPage = () => {
             <label className="flex flex-col">
               <span className="text-gray-700 font-semibold mb-1">Message</span>
               <textarea
+                name="message"
                 rows={5}
                 placeholder="Your message..."
                 className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                value={formData.message}
+                onChange={handleChange}
                 required
               />
             </label>
 
             <button
               type="submit"
-              className="bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition"
+              className={`bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isSubmitting}
             >
-              Send Message
+              {isSubmitting ? "Sending..." : "Send Message"}
             </button>
           </form>
         </motion.div>

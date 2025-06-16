@@ -2,7 +2,8 @@ import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/shared/Button";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useNewsContext } from "@/lib/contexts/NewsContext";
 
 interface News {
   _id: string;
@@ -11,59 +12,65 @@ interface News {
 }
 
 interface NewsPageProps {
-  news: News[];
+  initialNews: News[];
 }
 
-export default function NewsPage({ news = [] }: NewsPageProps) {
+export default function NewsPage({ initialNews }: NewsPageProps) {
+  const { news, setNews } = useNewsContext();
   const prefersReducedMotion = useReducedMotion();
 
-  // Memoized news cards
-  const newsCards = useMemo(() =>
-    news.map((post) => (
-      <motion.div
-        key={post._id}
-        className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
-        initial={prefersReducedMotion ? {} : { opacity: 0 }}
-        animate={prefersReducedMotion ? {} : { opacity: 1 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-      >
-        <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
-          {post.title}
-        </h2>
-        <p className="text-gray-500 mb-4 line-clamp-3">
-          {post.body || "Description not available."}
-        </p>
-        <div className="flex flex-col space-y-2 items-center">
-          <Link href={`/update/news/${post._id}`} passHref legacyBehavior>
-            <a>
-              <Button text="Update" variant="tertiary" />
-            </a>
-          </Link>
-          <Button
-            text="Delete"
-            variant="danger"
-            onClick={async () => {
-              const confirmed = confirm("Do you want to delete news?");
-              if (!confirmed) return;
+  // Populate the context with server-side fetched data on mount
+  useEffect(() => {
+    setNews(initialNews);
+  }, [initialNews, setNews]);
 
-              try {
-                const res = await fetch(`/api/news/${post._id}`, {
-                  method: "DELETE",
-                });
-                if (!res.ok) throw new Error("Failed to delete news.");
-                alert("News deleted successfully.");
-                // Reload the page to reflect deletion
-                window.location.reload();
-              } catch (error) {
-                alert("Error deleting news.");
-                console.error(error);
-              }
-            }}
-          />
-        </div>
-      </motion.div>
-    )),
-    [news, prefersReducedMotion]
+  // Memoized news cards
+  const newsCards = useMemo(
+    () =>
+      news.map((post) => (
+        <motion.div
+          key={post._id}
+          className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
+          initial={prefersReducedMotion ? {} : { opacity: 0 }}
+          animate={prefersReducedMotion ? {} : { opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+        >
+          <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
+            {post.title}
+          </h2>
+          <p className="text-gray-500 mb-4 line-clamp-3">
+            {post.body || "Description not available."}
+          </p>
+          <div className="flex flex-col space-y-2 items-center">
+            <Link href={`/update/news/${post._id}`} passHref legacyBehavior>
+              <a>
+                <Button text="Update" variant="tertiary" />
+              </a>
+            </Link>
+            <Button
+              text="Delete"
+              variant="danger"
+              onClick={async () => {
+                const confirmed = confirm("Do you want to delete news?");
+                if (!confirmed) return;
+
+                try {
+                  const res = await fetch(`/api/news/${post._id}`, {
+                    method: "DELETE",
+                  });
+                  if (!res.ok) throw new Error("Failed to delete news.");
+                  alert("News deleted successfully.");
+                  setNews((prev) => prev.filter((n) => n._id !== post._id));
+                } catch (error) {
+                  alert("Error deleting news.");
+                  console.error(error);
+                }
+              }}
+            />
+          </div>
+        </motion.div>
+      )),
+    [news, prefersReducedMotion, setNews]
   );
 
   return (
@@ -112,12 +119,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const news: News[] = await res.json();
 
     return {
-      props: { news },
+      props: { initialNews: news },
     };
   } catch (error) {
     console.error(error);
     return {
-      props: { news: [] },
+      props: { initialNews: [] },
     };
   }
 };

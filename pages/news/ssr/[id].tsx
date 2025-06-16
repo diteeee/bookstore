@@ -1,5 +1,3 @@
-// pages/ssr/[id].tsx
-
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 

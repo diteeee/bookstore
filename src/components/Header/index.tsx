@@ -2,8 +2,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Logo from "@/assets/icons/logo.svg";
 import cs from "classnames";
+import { signOut, useSession } from "next-auth/react";
+import Button from "@/components/shared/Button";
 
 export function Header() {
+    const { data: session, status } = useSession();
+
     const router = useRouter();
     const items = [
         {
@@ -47,6 +51,16 @@ export function Header() {
                     {item.name}
                     </Link>
                 ))}
+                </div>
+                <div className="flex gap-5">
+                    {status == "authenticated" ? (
+                        <Button onClick={() => signOut({ callbackUrl: "/sign-in" })} text="Dil" />
+                    ) : (
+                        <>
+                            <Button onClick={() => router.push("/sign-up")} text="Sign Up" />
+                            <Button onClick={() => router.push("/sign-in")} text="Sign In" variant="secondary" />
+                        </>
+                    )}
                 </div>
             </div>
         </div>

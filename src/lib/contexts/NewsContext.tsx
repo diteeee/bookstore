@@ -1,4 +1,3 @@
-
 import { News } from "@/api/models/News";
 import { createContext, useContext, useState, ReactNode} from "react";
 
@@ -13,7 +12,7 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
     const [news, setNews] = useState<News[]>([]);
     return (
         <NewsContext.Provider value={{ news, setNews }}>
-        {children}
+            {children}
         </NewsContext.Provider>
     );
 };

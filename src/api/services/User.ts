@@ -31,13 +31,13 @@ export async function getUser(email: string) {
     return user;
 }
 
-export async function updateUser(email: string, data: User) {
-    const client = await clientPromise;
-    const db = client.db("bookstore");
-    const user = await db
-        .collection("users")
-        .updateOne({email: email});
-    return user;
+export async function updateUser(email: string, data: Partial<User>) {
+  const client = await clientPromise;
+  const db = client.db("bookstore");
+  const user = await db
+    .collection("users")
+    .updateOne({ email }, { $set: data });
+  return user;
 }
 
 export async function deleteUser(email: string) {

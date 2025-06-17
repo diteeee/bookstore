@@ -21,16 +21,6 @@ export default function AdminDashboard() {
   const [editData, setEditData] = useState<Partial<User>>({});
 
   useEffect(() => {
-    if (status === "loading") return;
-
-    if (!session) {
-      router.push("/sign-in");
-    } else if (session.user?.role !== "admin") {
-      router.push("/");
-    }
-  }, [session, status, router]);
-
-  useEffect(() => {
     if (session?.user?.role === "admin") {
       fetchUsers();
     }

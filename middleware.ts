@@ -4,37 +4,35 @@ import type { NextRequest } from "next/server";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
-export async function middleware(req: NextRequest) {
-  // Get the token from NextAuth (JWT)
-  const token = await getToken({ req, secret });
+// Define public pages that do NOT require authentication
+const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in"];
 
-  // Get requested pathname
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow public paths like sign-in, API routes, static files
+  // Allow API, _next, static files, and public pages without authentication
   if (
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
-    pathname === "/sign-in"
+    pathname.startsWith("/static") ||
+    publicPaths.includes(pathname)
   ) {
     return NextResponse.next();
   }
 
-  // If no token, redirect to sign-in page
+  // Check for token
+  const token = await getToken({ req, secret });
+
+  // If no token, redirect to sign-in
   if (!token) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  // Example: Protect admin routes
-  if (pathname.startsWith("/admin")) {
-    // Check role
-    if (token.role !== "admin") {
-      // Redirect non-admin users to homepage or 403 page
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+  // Protect admin routes (optional)
+  if (pathname.startsWith("/admin") && token.role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
-  console.log("Middleware triggered for:", req.nextUrl.pathname);
 
-  // If everything is fine, continue
+  // Allow authenticated users to continue
   return NextResponse.next();
 }

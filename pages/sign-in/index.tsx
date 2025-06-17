@@ -1,4 +1,4 @@
-import { getCsrfToken, signIn } from "next-auth/react";
+import { getCsrfToken, signIn, getSession } from "next-auth/react";
 import router from "next/router";
 import { useState } from "react";
 import Button from "@/components/shared/Button";
@@ -9,19 +9,35 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
     const [error, setError] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
-        setError("");
-        e.preventDefault();
-        const res = await signIn("credentials", {
-            redirect: false,
-            email,
-            password,
-        });
-        if (res?.error) {
-            setError(res.error);
-        } else if (res?.url) {
-            router.push("/");
-        }
-    };
+  e.preventDefault();
+  setError("");
+
+  const res = await signIn("credentials", {
+    redirect: false,
+    email,
+    password,
+  });
+
+  if (res?.error) {
+    setError(res.error);
+  } else if (res?.ok) {
+    try {
+      const session = await getSession();
+      if (session?.user) {
+        localStorage.setItem("authToken", session.user.token || "");
+        localStorage.setItem("userRole", session.user.role || "");
+        alert("Successfully signed in!");
+        router.push("/");
+      } else {
+        setError("Could not retrieve session details.");
+      }
+    } catch (error) {
+      console.error("Error fetching session:", error);
+      setError("An error occurred while signing in.");
+    }
+  }
+};
+
 
     return (
         <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
@@ -79,4 +95,5 @@ SignIn.getInitialProps = async (context: any) => {
         csrfToken: await getCsrfToken(context),
     };
 };
+
 SignIn.displayName = "Sign In | My Application";

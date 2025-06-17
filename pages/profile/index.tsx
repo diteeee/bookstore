@@ -56,6 +56,8 @@ const ProfilePage = () => {
     try {
       await signOut({ redirect: false });
       router.push("/");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userRole");
     } catch (error) {
       console.error("Error during logout:", error);
       setError("Failed to log out. Please try again.");

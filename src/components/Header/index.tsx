@@ -17,6 +17,12 @@ export function Header() {
     { name: "News", pathName: "/news" },
   ];
 
+  const handleSignOut = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    signOut({ callbackUrl: "/sign-in" });
+  };
+
   return (
     <div className="py-2 fixed z-50 bg-white border-b w-full transition-all duration-300">
       <div className="container m-auto flex items-center">
@@ -47,8 +53,8 @@ export function Header() {
                 <Button as="a" text="Profile" />
               </Link>
               <Button
-                onClick={() => signOut({ callbackUrl: "/sign-in" })}
-                text="Dil"
+                onClick={handleSignOut}
+                text="Sign Out"
               />
             </>
           ) : (

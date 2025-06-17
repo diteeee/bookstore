@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@/components/shared/Button";
+import { useRouter } from "next/router";
 
 interface CartItem {
   _id?: string;
@@ -11,11 +12,32 @@ interface CartItem {
   bookKey?: string;
 }
 
+// Simple auth hook inline for this example
+function useAuth() {
+  const router = useRouter();
+  const [loadingAuth, setLoadingAuth] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("Please sign in to continue.");
+      router.push("/sign-in");
+    } else {
+      setLoadingAuth(false);
+    }
+  }, [router]);
+
+  return loadingAuth;
+}
+
 export default function Cart() {
+  const loadingAuth = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (loadingAuth) return; // wait for auth check
+
     const fetchCartItems = async () => {
       try {
         const response = await fetch("/api/cart");
@@ -29,7 +51,7 @@ export default function Cart() {
     };
 
     fetchCartItems();
-  }, []);
+  }, [loadingAuth]);
 
   const handleRemoveFromCart = async (id: string) => {
     const confirmed = confirm("Do you want to remove this item from the cart?");
@@ -50,14 +72,20 @@ export default function Cart() {
     }
   };
 
+  if (loadingAuth || loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
       <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
         Your Cart
       </h1>
-      {loading ? (
-        <CircularProgress />
-      ) : cartItems.length > 0 ? (
+      {cartItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-7xl">
           {cartItems.map((item) => (
             <div

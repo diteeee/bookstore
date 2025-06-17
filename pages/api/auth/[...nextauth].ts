@@ -23,10 +23,13 @@ export const authOptions = {
         const isValid = await compare(credentials!.password, user.password);
         if (!isValid) throw new Error("Fjalëkalimi nuk është i saktë");
 
+        // Return user data along with a mock token
         return {
           id: user._id.toString(),
           email: user.email,
+          role: user.role, // <-- add role here
           emailVerified: user.emailVerified ?? null,
+          token: `mock-token-${user._id}` // Replace with actual token if available
         };
       },
     }),
@@ -36,6 +39,24 @@ export const authOptions = {
   },
   session: {
     strategy: "jwt" as "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.role = user.role;  // <--- add role here
+        token.token = user.token; // Add token from user object
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.user.role = token.role;   // <--- add role here
+      session.user.token = token.token; // Attach token to the session
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

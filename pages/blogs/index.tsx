@@ -50,6 +50,13 @@ export default function Blogs({ books }: BlogsProps) {
 
   // Add to Cart function
   const handleAddToCart = async (book: Book | Blog) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("Please sign in to add items to your cart.");
+      router.push("/sign-in"); // Redirect to sign-in page if you want
+      return;
+    }
+
     try {
       const payload =
         "key" in book
@@ -70,6 +77,7 @@ export default function Blogs({ books }: BlogsProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // optionally send token if backend requires it
         },
         body: JSON.stringify(payload),
       });
@@ -84,6 +92,7 @@ export default function Blogs({ books }: BlogsProps) {
       alert("Error adding to cart. Please try again.");
     }
   };
+
 
   const loadMoreBooks = () => {
     alert("No more books to load.");

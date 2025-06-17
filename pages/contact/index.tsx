@@ -48,7 +48,7 @@ const ContactPage = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-14 max-w-2xl"
+        className="text-center mb-14 max-w-2xl mt-8"
       >
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
           Get in Touch
@@ -74,7 +74,7 @@ const ContactPage = () => {
                 type="text"
                 name="name"
                 placeholder="Your Name"
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 text-black"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -87,7 +87,7 @@ const ContactPage = () => {
                 type="email"
                 name="email"
                 placeholder="your.email@example.com"
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 text-black"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -100,7 +100,7 @@ const ContactPage = () => {
                 name="message"
                 rows={5}
                 placeholder="Your message..."
-                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none text-black"
                 value={formData.message}
                 onChange={handleChange}
                 required

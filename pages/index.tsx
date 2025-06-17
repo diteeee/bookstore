@@ -6,6 +6,7 @@ import useFetch from "hooks/useFetch";
 import { Rocket, BarChart, ShieldCheck } from "lucide-react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 interface Book {
   key: string; // unique id
@@ -30,6 +31,7 @@ const HomePage = () => {
     }
     return session?.user?.role || null;
   }, [session]);
+  const router = useRouter();
 
   useEffect(() => {
     if (initialData?.docs) {
@@ -48,7 +50,7 @@ const HomePage = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-14 max-w-2xl"
+        className="text-center mb-14 max-w-2xl mt-8"
       >
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
           Welcome to Our Bookstore
@@ -61,7 +63,7 @@ const HomePage = () => {
           <Button
             text="Discover Our Collection"
             variant="primary"
-            onClick={() => alert("Redirecting to collections...")}
+            onClick={() => router.push("/blogs")}
           />
         </div>
       </motion.div>
@@ -139,7 +141,7 @@ const HomePage = () => {
         <Button
           text="Contact Us"
           variant="secondary"
-          onClick={() => alert("Redirecting to contact page...")}
+          onClick={() => router.push("/contact")}
         />
       </motion.div>
     </div>

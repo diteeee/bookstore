@@ -79,7 +79,7 @@ const ProfilePage = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-14 max-w-2xl"
+        className="text-center mb-14 max-w-2xl mt-8"
       >
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
           My Profile

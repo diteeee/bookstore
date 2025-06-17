@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@/components/shared/Button";
+import { motion } from "framer-motion";
 
 interface CartItem {
   _id?: string;
@@ -60,9 +61,16 @@ useEffect(() => {
 
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
-      <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
-        Your Cart
-      </h1>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center mb-14 max-w-2xl mt-8"
+      >
+        <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
+          Your Cart
+        </h1>
+      </motion.div>
       {loading ? (
         <CircularProgress />
       ) : cartItems.length > 0 ? (

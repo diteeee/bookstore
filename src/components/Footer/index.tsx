@@ -11,7 +11,7 @@ export function Footer() {
                 </picture>
                 </Link>
                 <div className="flex-1 flex justify-center">
-                    <p className="text-grey">All rights reserved - MyCompanyName.</p>
+                    <p className="text-grey">All rights reserved - BookStore.</p>
                 </div>
             </div>
         </div>

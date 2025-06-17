@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/shared/Button";
-import { BookOpen, User, Lock, Users, ClipboardList, Settings } from "lucide-react";
+import { BookOpen, User, Lock, ClipboardList, Settings } from "lucide-react";
 
 const AboutPage = () => {
   return (

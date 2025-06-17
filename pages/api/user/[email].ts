@@ -4,6 +4,12 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import bcrypt from "bcryptjs";
 
+type UpdateData = {
+  name: string;
+  role: string;
+  password?: string;
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email } = req.query;
 
@@ -13,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Protect route: only admin can update/delete users
   const session = await getServerSession(req, res, authOptions);
-  if (!session || session.user?.role !== "admin") {
+  if (!session || !session.user || session.user.role !== "admin") {
     return res.status(403).json({ error: "Forbidden" });
   }
 
@@ -25,10 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: "Name and role are required" });
       }
 
-      const updateData: any = { name, role };
+      const updateData: UpdateData = { name, role };
 
-      if (password && password.trim() !== "") {
-        updateData.password = await bcrypt.hash(password, 10);
+      if (typeof password === "string" && password.trim()) {
+        updateData.password = await bcrypt.hash(password.trim(), 10);
       }
 
       const result = await updateUser(email, updateData);

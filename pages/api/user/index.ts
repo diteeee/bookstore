@@ -1,10 +1,13 @@
-// pages/api/user.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import { getUser, updateUser } from "@/api/services/User"; // adjust import if needed
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]"; // adjust path if necessary
+
+type UpdateUserData = {
+  name: string;
+  password?: string;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -26,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Exclude sensitive information like password from the response
-      const { password, ...userData } = user;
+      const { password: _, ...userData } = user; // Remove the password from the response
       return res.status(200).json(userData);
     } else if (req.method === "PUT") {
       // Handle PUT request to update user data
@@ -37,21 +40,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: "Name is required" });
       }
 
-      const updatedData: any = { name };
+      const updatedData: UpdateUserData = { name };
 
       // Update password if provided and not empty
       if (password && password.trim() !== "") {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        updatedData.password = hashedPassword;
+        updatedData.password = await bcrypt.hash(password.trim(), 10);
       }
 
       const result = await updateUser(email, updatedData);
 
       // Check if the update operation was successful
       if (!result.modifiedCount) {
-        return res
-          .status(404)
-          .json({ error: "User not found or no changes made" });
+        return res.status(404).json({ error: "User not found or no changes made" });
       }
 
       return res.status(200).json({ message: "Profile updated successfully" });

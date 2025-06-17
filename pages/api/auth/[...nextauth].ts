@@ -18,10 +18,17 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const user = await getUser(credentials?.email!);
+        if (!credentials?.email) {
+          throw new Error("Email is required");
+        }
+        if (!credentials.password) {
+          throw new Error("Password is required");
+        }
+
+        const user = await getUser(credentials.email);
         if (!user) throw new Error("Email nuk ekziston");
 
-        const isValid = await compare(credentials!.password, user.password);
+        const isValid = await compare(credentials.password, user.password);
         if (!isValid) throw new Error("Fjalëkalimi nuk është i saktë");
 
         // Return user data along with a mock token

@@ -26,11 +26,7 @@ export default function BlogsDB() {
     }
   }, [session]);
 
-  const {
-    data: blogsData,
-    loading: blogsLoading,
-    remove,
-  } = useFetch<Blog[]>("/api/blogs");
+  const { data: blogsData, remove } = useFetch<Blog[]>("/api/blogs");
 
   const handleAddToCart = async (post: Blog) => {
     if (!session) {
@@ -47,7 +43,7 @@ export default function BlogsDB() {
         },
         body: JSON.stringify({
           title: post.title,
-          body: post.body, // if author_name exists on Blog, else fix accordingly
+          body: post.body,
           bookId: post._id,
         }),
       });
@@ -58,8 +54,12 @@ export default function BlogsDB() {
       }
 
       alert("Book added to cart successfully!");
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
   };
 
@@ -71,9 +71,12 @@ export default function BlogsDB() {
       await remove(`/api/blogs/${id}`);
       alert("Book deleted successfully.");
       window.location.reload();
-    } catch (error) {
-      alert("Error deleting book.");
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
   };
 

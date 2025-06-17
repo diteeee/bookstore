@@ -1,6 +1,5 @@
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/router";
 import { motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/shared/Button";
 
@@ -13,7 +12,6 @@ interface User {
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
 
   const [userRole, setUserRole] = useState<string | null>(null);

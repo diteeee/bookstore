@@ -6,8 +6,9 @@ import { ObjectId } from "mongodb";
 export async function addToCart(data: CartItem) {
   const client = await clientPromise;
   const db = client.db("bookstore");
+  const { _id, ...cartData } = data; // exclude _id
   const result = await db.collection("cart").insertOne({
-    ...data,
+    ...cartData,
     createdAt: new Date(),
   });
   return result;

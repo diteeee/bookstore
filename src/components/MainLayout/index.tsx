@@ -12,11 +12,6 @@ interface Props {
 export function MainLayout(props: Props) {
   const [cartItemCount, setCartItemCount] = useState(0);
 
-  const handleViewCart = () => {
-    alert("View Cart clicked!");
-    // Navigate to the cart page or display the cart modal
-  };
-
   return (
     <div className="relative min-h-screen">
       <Head>
@@ -25,7 +20,7 @@ export function MainLayout(props: Props) {
       <Header />
       <main>{props.children}</main>
       <Footer />
-      <CartBar itemCount={cartItemCount} onViewCart={handleViewCart} />
+      <CartBar itemCount={cartItemCount} />
     </div>
   );
 }

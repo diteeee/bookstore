@@ -55,7 +55,7 @@ const ContactPage = () => {
         </h1>
         <p className="text-gray-600 text-lg leading-relaxed">
           Whether you have questions, need recommendations, or simply want to
-          say hello, we're here for you. Reach out anytime!
+          say hello, we&apos;re here for you. Reach out anytime!
         </p>
       </motion.div>
 
@@ -144,7 +144,8 @@ const ContactPage = () => {
             </p>
           </div>
           <p className="text-gray-600 mt-6">
-            <strong>Hours:</strong> Mon-Sat, 9am to 7pm. We’re always happy to
+            <strong>Hours:</strong> Mon-Sat, 9am to 7pm. We&apos;re always happy to assist you!
+
             assist you!
           </p>
         </motion.div>

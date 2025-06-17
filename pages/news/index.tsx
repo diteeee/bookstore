@@ -20,11 +20,10 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
   const { news, setNews } = useNewsContext();
   const prefersReducedMotion = useReducedMotion();
   const { data: session } = useSession();
+
+  // Safely retrieve the userRole with fallback
   const userRole = useMemo(() => {
-    if (typeof window !== "undefined") {
-      return session?.user?.role || localStorage.getItem("userRole");
-    }
-    return session?.user?.role || null;
+    return session?.user?.role || localStorage.getItem("userRole") || null;
   }, [session]);
 
   // Populate the context with server-side fetched data on mount
@@ -51,10 +50,8 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
           </p>
           <div className="flex flex-col space-y-2 items-center">
             {userRole === "admin" && (
-              <Link href={`/update/news/${post._id}`} passHref legacyBehavior>
-                <a>
-                  <Button text="Update" variant="tertiary" />
-                </a>
+              <Link href={`/update/news/${post._id}`} passHref>
+                <Button text="Update" variant="tertiary" onClick={() => {}} />
               </Link>
             )}
             {userRole === "admin" && (
@@ -62,7 +59,7 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
                 text="Delete"
                 variant="danger"
                 onClick={async () => {
-                  const confirmed = confirm("Do you want to delete news?");
+                  const confirmed = confirm("Do you want to delete this news?");
                   if (!confirmed) return;
 
                   try {
@@ -82,7 +79,7 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
           </div>
         </motion.div>
       )),
-    [news, prefersReducedMotion, setNews]
+    [news, prefersReducedMotion, setNews, userRole]
   );
 
   return (
@@ -98,18 +95,18 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
           News Display
         </h1>
         <p className="text-gray-600 text-lg leading-relaxed">
-          Explore latest bookstore news
+          Explore the latest bookstore news
         </p>
       </motion.div>
 
       {/* Add News Button */}
-      <div className="mb-8">
-        {userRole === "admin" && (
+      {userRole === "admin" && (
+        <div className="mb-8">
           <Link href="/create/news" passHref>
-            <Button text="Add News" variant="tertiary" />
+            <Button text="Add News" variant="tertiary" onClick={() => {}} />
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* News Content */}
       {news.length > 0 ? (
@@ -119,7 +116,7 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
       ) : (
         <div className="col-span-3 py-20">
           <p className="text-xl font-bold text-gray-800 text-center">
-            No news in the database.
+            No news available in the database.
           </p>
         </div>
       )}

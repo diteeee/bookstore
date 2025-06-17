@@ -1,16 +1,20 @@
+import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
-import { authOptions } from "../auth/[...nextauth]"; // adjust path if necessary
+import { authOptions } from "../auth/[...nextauth]";
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const userId = session.user.id; // This comes from your NextAuth session
+  const userId = session.user.id; // adjust if your session has different user structure
   const client = await clientPromise;
   const db = client.db("bookstore");
   const cartCollection = db.collection("cart");
@@ -26,18 +30,18 @@ export default async function handler(req, res) {
       }
 
       case "POST": {
-        const { title, authorName, bookKey, bookId } = req.body;
+        const { title, authorName, body, bookKey, bookId } = req.body;
 
         const newItem = await cartCollection.insertOne({
           userId,
           title,
           authorName,
+          body,
           bookKey: bookKey || null,
           bookId: bookId || null,
           createdAt: new Date(),
         });
 
-        // Note: insertedId instead of ops for MongoDB driver v4+
         const insertedItem = await cartCollection.findOne({ _id: newItem.insertedId });
 
         return res.status(201).json(insertedItem);
@@ -45,12 +49,12 @@ export default async function handler(req, res) {
 
       case "DELETE": {
         const { id } = req.query;
-        if (!ObjectId.isValid(id)) {
+        if (!ObjectId.isValid(id as string)) {
           return res.status(400).json({ error: "Invalid cart item ID" });
         }
 
         const result = await cartCollection.deleteOne({
-          _id: new ObjectId(id),
+          _id: new ObjectId(id as string),
           userId,
         });
 

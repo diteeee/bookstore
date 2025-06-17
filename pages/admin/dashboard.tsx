@@ -1,5 +1,5 @@
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 import { motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/shared/Button";
@@ -16,17 +16,13 @@ export default function AdminDashboard() {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
 
+  const [userRole, setUserRole] = useState<string | null>(null);
+
   const [users, setUsers] = useState<User[]>([]);
   const [editingEmail, setEditingEmail] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<User>>({});
 
-  useEffect(() => {
-    if (session?.user?.role === "admin") {
-      fetchUsers();
-    }
-  }, [session]);
-
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     const res = await fetch("/api/users");
     if (res.ok) {
       const data = await res.json();
@@ -34,9 +30,25 @@ export default function AdminDashboard() {
     } else {
       console.error("Failed to fetch users");
     }
-  }
+  }, []);
 
-  async function handleDelete(email: string) {
+  // Sync userRole from session or localStorage
+  useEffect(() => {
+    if (session?.user?.role) {
+      setUserRole(session.user.role);
+      if (session.user.role === "admin") {
+        fetchUsers();
+      }
+    } else if (typeof window !== "undefined") {
+      const roleFromStorage = localStorage.getItem("userRole");
+      setUserRole(roleFromStorage);
+      if (roleFromStorage === "admin") {
+        fetchUsers();
+      }
+    }
+  }, [session, fetchUsers]);
+
+  const handleDelete = useCallback(async (email: string) => {
     if (!confirm(`Are you sure you want to delete user ${email}?`)) return;
 
     const res = await fetch(`/api/user/${encodeURIComponent(email)}`, {
@@ -47,19 +59,9 @@ export default function AdminDashboard() {
     } else {
       alert("Failed to delete user");
     }
-  }
+  }, [fetchUsers]);
 
-  function startEditing(user: User) {
-    setEditingEmail(user.email);
-    setEditData({ name: user.name, role: user.role });
-  }
-
-  function cancelEditing() {
-    setEditingEmail(null);
-    setEditData({});
-  }
-
-  async function saveEdit(email: string) {
+  const saveEdit = useCallback(async (email: string) => {
     const res = await fetch(`/api/user/${encodeURIComponent(email)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -74,6 +76,17 @@ export default function AdminDashboard() {
       const errorData = await res.json();
       alert("Failed to update user: " + (errorData.error || res.statusText));
     }
+  }, [editData, fetchUsers]);
+
+
+  function startEditing(user: User) {
+    setEditingEmail(user.email);
+    setEditData({ name: user.name, role: user.role });
+  }
+
+  function cancelEditing() {
+    setEditingEmail(null);
+    setEditData({});
   }
   
   const handleSignOut = () => {
@@ -96,16 +109,16 @@ export default function AdminDashboard() {
             {editingEmail === user.email ? (
               <>
                 <input
-                  className="border border-gray-300 rounded px-3 py-2 mb-1 max-w-xs"
+                  className="border border-black-300 rounded px-3 py-2 mb-1 max-w-xs text-black"
                   value={editData.name || ""}
                   onChange={(e) =>
                     setEditData({ ...editData, name: e.target.value })
                   }
                   placeholder="Name"
                 />
-                <p className="mb-1 text-gray-700 font-mono truncate">{user.email}</p>
+                <p className="mb-1 text-gray-500 font-mono truncate">{user.email}</p>
                 <select
-                  className="border border-gray-300 rounded px-3 py-2 mb-1 max-w-xs"
+                  className="border border-black-300 rounded px-3 py-2 mb-1 max-w-xs text-black"
                   value={editData.role || ""}
                   onChange={(e) =>
                     setEditData({ ...editData, role: e.target.value })
@@ -120,7 +133,7 @@ export default function AdminDashboard() {
               </>
             ) : (
               <>
-                <h3 className="font-serif font-semibold text-lg truncate">{user.name}</h3>
+                <h3 className="font-serif font-semibold text-lg truncate text-black">{user.name}</h3>
                 <p className="text-gray-700 font-mono truncate">{user.email}</p>
                 <p className="capitalize text-gray-600 font-medium">{user.role}</p>
                 <p className="text-sm text-gray-500">
@@ -144,7 +157,7 @@ export default function AdminDashboard() {
           </div>
         </motion.li>
       )),
-    [users, editingEmail, editData, prefersReducedMotion]
+    [users, editingEmail, editData, prefersReducedMotion, handleDelete, saveEdit]
   );
 
   if (status === "loading") return <p className="p-6 text-center">Loading...</p>;
@@ -156,7 +169,7 @@ export default function AdminDashboard() {
         initial={prefersReducedMotion ? {} : { opacity: 0, y: -20 }}
         animate={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-14 max-w-3xl"
+        className="text-center mb-14 max-w-3xl mt-6"
       >
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-4">
           Admin Dashboard

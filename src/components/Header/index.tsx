@@ -15,7 +15,8 @@ export function Header() {
     { name: "Home", pathName: "/" },
     { name: "About", pathName: "/about" },
     { name: "Contact Us", pathName: "/contact" },
-    { name: "Blogs", pathName: "/blogs" },
+    { name: "Books", pathName: "/blogs" },
+    { name: "Special Editions", pathName: "/blogs/special" },
     { name: "News", pathName: "/news" },
   ];
 
@@ -50,13 +51,23 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          {status === "authenticated" && (
+            <Link
+              href="/dashboard"
+              className={cs("text-black", {
+                "underline font-semibold": router.pathname === "/dashboard",
+              })}
+            >
+              Dashboard
+            </Link>
+          )}
         </nav>
 
-        <div className="hidden md:flex gap-5 items-center">
+        <div className="hidden md:flex gap-5 items-center mr-6">
           {status === "authenticated" ? (
             <>
               <Link href="/profile" passHref>
-                <Button as="a" text="Profile" />
+                <Button text="Profile" onClick={() => {}}/>
               </Link>
               <Button onClick={handleSignOut} text="Sign Out" />
             </>
@@ -139,6 +150,20 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          {status === "authenticated" && (
+            <Link
+              href="/dashboard"
+              className={cs(
+                "text-black text-lg font-medium",
+                {
+                  "underline font-semibold": router.pathname === "/dashboard",
+                }
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex-grow" />

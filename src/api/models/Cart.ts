@@ -3,6 +3,7 @@ export interface CartItem {
   userId: string; // Assuming user authentication, each cart is tied to a user
   bookKey: string; // Unique key of the book
   title: string;
+  body: string;
   authorName?: string[];
   createdAt?: Date;
 }

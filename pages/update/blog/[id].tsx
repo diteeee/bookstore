@@ -1,4 +1,4 @@
-import { Blog } from "@api/models/Blog";
+import { Blog } from "@/api/models/Blog";
 import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,13 +8,13 @@ export default function UpdateBlog() {
   const router = useRouter();
   const { id } = router.query;
   const [newBlog, setNewBlog] = useState({ title: "", body: "" });
-  const { data: existingBlog, loading, put } = useFetch<Blog[]>(`/api/blogs/${id}`);
+  const { data: existingBlog, loading, put } = useFetch<Blog>(`/api/blogs/${id}`); // Use Blog here
 
   useEffect(() => {
     if (existingBlog) {
       setNewBlog({
-        title: existingBlog.title,
-        body: existingBlog.body,
+        title: existingBlog.title || "",
+        body: existingBlog.body || "",
       });
     }
   }, [existingBlog]);
@@ -24,42 +24,42 @@ export default function UpdateBlog() {
 
     try {
       const updatedBlog = await put(newBlog); // Log response to ensure update
-      console.log("Updated Blog: ", updatedBlog);
+      console.log("Updated book: ", updatedBlog);
       router.push("/blogs");
     } catch (error) {
       console.error("Failed to update the blog:", error);
-      alert("Failed to update the blog. Please try again.");
+      alert("Failed to update the book. Please try again.");
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Duke u ngarkuar...</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
       {/* Header */}
-      <div className="text-center mb-14 max-w-2xl">
+      <div className="text-center mb-14 max-w-2xl mt-6">
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
-          Update Blog
+          Update Book
         </h1>
         <p className="text-gray-600 text-lg leading-relaxed">
-          Make changes to your blog content and save your updates.
+          Make changes to your book content and save your updates.
         </p>
       </div>
 
       {/* Form */}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8 w-full max-w-2xl">
         <h2 className="text-lg font-serif font-bold text-gray-800 mb-4">
-          Update Blog Details
+          Update Book Details
         </h2>
         <input
           type="text"
-          placeholder="Titulli"
+          placeholder="Title"
           value={newBlog.title}
           onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
           className="w-full px-4 py-2 mb-4 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <textarea
-          placeholder="Përmbajtja"
+          placeholder="Content"
           value={newBlog.body}
           onChange={(e) => setNewBlog({ ...newBlog, body: e.target.value })}
           className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 h-40 resize-none"
@@ -67,9 +67,8 @@ export default function UpdateBlog() {
         <div className="flex justify-end">
             <Button
                 onClick={handleUpdate}
-                text="Update Blog"
+                text="Update Book"
                 variant="tertiary"
-                className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             />
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { removeFromCart } from "@/api/services/cart";
+import { removeFromCart } from "@/api/services/Cart";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;

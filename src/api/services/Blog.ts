@@ -4,14 +4,16 @@ import { Blog } from "@/api/models/Blog";
 import { ObjectId } from "mongodb"
 
 export async function createBlog(data: Blog) {
-    const client = await clientPromise;
-    const db = client.db("bookstore");
-    const result = await db.collection ("blogs").insertOne({
-        ...data,
-        createdAt: new Date(),
-    });
-    return result;
-};
+  const client = await clientPromise;
+  const db = client.db("bookstore");
+  const { _id, ...blogData } = data; // exclude _id from data before inserting
+  const result = await db.collection("blogs").insertOne({
+    ...blogData,
+    createdAt: new Date(),
+  });
+
+  return result;
+}
 
 export async function getBlogs(limit = 10) {
   const client = await clientPromise;

@@ -50,7 +50,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
     return (
         <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
             {/* Header */}
-            <div className="text-center mb-14 max-w-2xl">
+            <div className="text-center mb-14 max-w-2xl mt-6">
                 <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
                     Sign In
                 </h1>
@@ -108,7 +108,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
                             type="submit"
                             text="Sign In"
                             variant="tertiary"
-                            className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            onClick={() => {}}
                         />
                     </div>
                 </form>

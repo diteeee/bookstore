@@ -1,4 +1,4 @@
-import { Blog } from "@api/models/Blog";
+import { Blog } from "@/api/models/Blog";
 import useFetch from "hooks/useFetch";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -19,7 +19,7 @@ export default function CreateBlog() {
   return (
     <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
       {/* Header */}
-      <div className="text-center mb-14 max-w-2xl">
+      <div className="text-center mb-14 max-w-2xl mt-6">
         <h1 className="text-5xl font-serif font-extrabold text-gray-800 mb-6">
           Add New Book
         </h1>
@@ -51,7 +51,6 @@ export default function CreateBlog() {
             onClick={handleCreate}
             text="Add Book"
             variant="tertiary"
-            className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           />
         </div>
       </div>

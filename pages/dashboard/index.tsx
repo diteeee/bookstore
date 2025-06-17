@@ -74,7 +74,7 @@ export default function Dashboard() {
         <header className="bg-white shadow-sm p-4 flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
           <div className="text-gray-600 text-sm">
-            Welcome, <strong>{session?.user?.name || "User"}</strong>
+            Welcome!
           </div>
         </header>
 

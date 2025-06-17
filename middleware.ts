@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 const secret = process.env.NEXTAUTH_SECRET;
 
 // Public pages accessible without authentication
-const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in", "/sign-up"];
+const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in", "/sign-up", "/blogs/special"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

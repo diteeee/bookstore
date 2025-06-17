@@ -7,13 +7,14 @@ export default async function handler(
 ) {
     if (req.method === "GET") {
         try {
-            const news = await getSingleNews(id as string);
+            const id = req.query.id as string;
+            const news = await getSingleNews(id);
             res.status(200).json(news);
         } catch (error) {
             res.status(500).json(error);
         }
     }
-    if (req.method === "PUT") {
+    else if (req.method === "PUT") {
         try {
             const newNews = req.body;
             const result = await updateNews(req.query.id as string, newNews);
@@ -22,7 +23,7 @@ export default async function handler(
             res.status(500).json(error);
         }
     }
-    if (req.method === "DELETE") {
+    else if (req.method === "DELETE") {
         try {
             const news = await deleteNews(req.query.id as string);
             res.status(200).json(news);

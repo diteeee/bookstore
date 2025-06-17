@@ -5,7 +5,8 @@ import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -41,20 +42,22 @@ export const authOptions = {
     strategy: "jwt" as "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user?: any }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.role = user.role;  // <--- add role here
-        token.token = user.token; // Add token from user object
+        token.role = user.role;
+        token.token = user.token;
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email;
-      session.user.role = token.role;   // <--- add role here
-      session.user.token = token.token; // Attach token to the session
+    async session({ session, token }: { session: any; token: JWT }) {
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.role = token.role;
+        session.user.token = token.token;
+      }
       return session;
     },
   },

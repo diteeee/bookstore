@@ -8,6 +8,7 @@ interface CartItem {
   _id?: string;
   source: string; // "openLibrary" or "database"
   title: string;
+  body: string;
   authorName?: string | string[];
   bookKey?: string;
 }
@@ -29,17 +30,17 @@ useEffect(() => {
 
       const data = await response.json();
       setCartItems(data);
-      console.log("cart items: ", cartItems);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     } finally {
       setLoading(false);
     }
   };
-
+  
   fetchCartItems();
 }, []);
 
+console.log("cart items: ", cartItems);
   const handleRemoveFromCart = async (id: string) => {
     const confirmed = confirm("Do you want to remove this item from the cart?");
     if (!confirmed) return;
@@ -81,12 +82,12 @@ useEffect(() => {
               className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
             >
               <h2 className="text-lg font-serif font-bold text-gray-800 mb-3">
-                {item.bookId.title}
+                {item.title}
               </h2>
               <p className="text-gray-500 mb-4 italic">
                 {Array.isArray(item.authorName)
                   ? item.authorName.join(", ")
-                  : item.bookId.body || "Unknown Author"}
+                  : item.authorName || item.body || "Unknown Author"}
               </p>
               <Button
                 text="Remove from Cart"

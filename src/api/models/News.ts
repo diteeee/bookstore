@@ -1,6 +1,6 @@
-export interface Blog {
+export interface News {
     _id?:any;
     title:string;
-    body:string;
+    body?:string;
     createdAt?: Date;
 }

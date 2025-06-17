@@ -15,21 +15,29 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await fetch("/api/cart");
-        const data = await response.json();
-        setCartItems(data);
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch("/api/cart", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
 
-    fetchCartItems();
-  }, []);
+      if (!response.ok) throw new Error("Failed to fetch cart items");
+
+      const data = await response.json();
+      setCartItems(data);
+      console.log("cart items: ", cartItems);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCartItems();
+}, []);
 
   const handleRemoveFromCart = async (id: string) => {
     const confirmed = confirm("Do you want to remove this item from the cart?");
@@ -65,12 +73,12 @@ export default function Cart() {
               className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
             >
               <h2 className="text-lg font-serif font-bold text-gray-800 mb-3">
-                {item.title}
+                {item.bookId.title}
               </h2>
               <p className="text-gray-500 mb-4 italic">
                 {Array.isArray(item.authorName)
                   ? item.authorName.join(", ")
-                  : item.authorName || "Unknown Author"}
+                  : item.bookId.body || "Unknown Author"}
               </p>
               <Button
                 text="Remove from Cart"

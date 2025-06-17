@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 const secret = process.env.NEXTAUTH_SECRET;
 
 // Define public pages that do NOT require authentication
-const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in"];
+const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in", "/sign-up"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import useFetch from "hooks/useFetch";
 import CircularProgress from "@mui/material/CircularProgress";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useSession, signIn } from "next-auth/react";
 
 interface Book {
   key: string; // e.g. "/works/OL45883W"
@@ -40,7 +41,9 @@ export default function Blogs({ books }: BlogsProps) {
   const [visibleBooks, setVisibleBooks] = useState<Book[]>(books);
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
+  const { data: session } = useSession();
 
+  console.log("session: ", session);
   const {
     data: blogsData,
     loading: blogsLoading,
@@ -48,50 +51,34 @@ export default function Blogs({ books }: BlogsProps) {
     refetch,
   } = useFetch<Blog[]>("/api/blogs");
 
-  // Add to Cart function
-  const handleAddToCart = async (book: Book | Blog) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      alert("Please sign in to add items to your cart.");
-      router.push("/sign-in"); // Redirect to sign-in page if you want
+    async function handleAddToCart(bookId: string) {
+    if (!session) {
+      alert("You must be logged in to add to cart");
       return;
     }
 
-    try {
-      const payload =
-        "key" in book
-          ? {
-              source: "openLibrary",
-              bookKey: book.key,
-              title: book.title,
-              authorName: book.author_name,
-            }
-          : {
-              source: "database",
-              bookId: book._id,
-              title: book.title,
-              authorName: "body" in book ? book.body : "Unknown Author",
-            };
+  try {
+    const response = await fetch("/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.user.token}`,  // <-- Add this
+      },
+      body: JSON.stringify({ bookId }),
+    });
 
-      const response = await fetch("/api/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // optionally send token if backend requires it
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add to cart");
-      }
-
-      alert("Book added to cart successfully!");
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      alert("Error adding to cart. Please try again.");
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      throw new Error(errorData.error || "Failed to add to cart");
     }
-  };
+
+    alert("Book added to cart successfully!");
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    alert(error.message);
+  }
+}
 
 
   const loadMoreBooks = () => {

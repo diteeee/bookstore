@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
-// Define public pages that do NOT require authentication
+// Public pages accessible without authentication
 const publicPaths = ["/", "/contact", "/about", "/blogs", "/news", "/sign-in", "/sign-up"];
 
 export async function middleware(req: NextRequest) {
@@ -28,8 +28,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  // Protect admin routes (optional)
+  // Protect admin routes (only admin allowed)
   if (pathname.startsWith("/admin") && token.role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // Protect create and update routes (only admin allowed)
+  if ((pathname.startsWith("/create") || pathname.startsWith("/update")) && token.role !== "admin") {
     return NextResponse.redirect(new URL("/", req.url));
   }
 

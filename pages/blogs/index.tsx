@@ -42,8 +42,16 @@ export default function Blogs({ books }: BlogsProps) {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
   const { data: session } = useSession();
+  const userRole = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return session?.user?.role || localStorage.getItem("userRole");
+    }
+    return session?.user?.role || null;
+  }, [session]);
 
   console.log("session: ", session);
+  console.log("userrole: ", userRole);
+
   const {
     data: blogsData,
     loading: blogsLoading,
@@ -51,34 +59,34 @@ export default function Blogs({ books }: BlogsProps) {
     refetch,
   } = useFetch<Blog[]>("/api/blogs");
 
-    async function handleAddToCart(bookId: string) {
+  async function handleAddToCart(bookId: string) {
     if (!session) {
       alert("You must be logged in to add to cart");
       return;
     }
 
-  try {
-    const response = await fetch("/api/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.user.token}`,  // <-- Add this
-      },
-      body: JSON.stringify({ bookId }),
-    });
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.user.token}`,  // <-- Add this
+        },
+        body: JSON.stringify({ bookId }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("API Error:", errorData);
-      throw new Error(errorData.error || "Failed to add to cart");
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        throw new Error(errorData.error || "Failed to add to cart");
+      }
+
+      alert("Book added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert(error.message);
     }
-
-    alert("Book added to cart successfully!");
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    alert(error.message);
   }
-}
 
 
   const loadMoreBooks = () => {
@@ -126,11 +134,15 @@ export default function Blogs({ books }: BlogsProps) {
           <Link href={`/blogs/ssg/${book.key}`} passHref legacyBehavior>
             <Button text="Read More" variant="tertiary" />
           </Link>
+          {userRole === "admin" && (
+
           <Button
             text="Delete"
             variant="danger"
             onClick={() => handleDelete(book.key)}
           />
+          )}
+
         </div>
         {/* Cart Icon */}
         <button
@@ -162,9 +174,11 @@ export default function Blogs({ books }: BlogsProps) {
       </motion.div>
 
       <div className="mb-8">
-        <Link href="/create/blog" passHref>
-          <Button text="Add Blog" variant="tertiary" />
-        </Link>
+        {userRole === "admin" && (
+          <Link href="/create/blog" passHref>
+            <Button text="Add Blog" variant="tertiary"/>
+          </Link>
+        )}
       </div>
 
       {blogsData && blogsData.length > 0 ? (
@@ -184,16 +198,23 @@ export default function Blogs({ books }: BlogsProps) {
                 {post.body || "No description available."}
               </p>
               <div className="flex flex-col space-y-2 items-center">
-                <Link href={`/update/blog/${post._id}`} passHref legacyBehavior>
-                  <a>
-                    <Button text="Update" variant="tertiary" />
-                  </a>
-                </Link>
-                <Button
-                  text="Delete"
-                  variant="danger"
-                  onClick={() => handleDeleteBlog(post._id)}
-                />
+
+                {userRole === "admin" && (
+                  <Link href={`/update/blog/${post._id}`} passHref legacyBehavior>
+                    <a>
+                      <Button text="Update" variant="tertiary" hidden={userRole !== "admin"}/>
+                    </a>
+                  </Link>
+                )}
+
+                {userRole === "admin" && (
+                  <Button
+                    text="Delete"
+                    variant="danger"
+                    onClick={() => handleDeleteBlog(post._id)}
+                    hidden={userRole !== "admin"}
+                  />
+                )}
               </div>
               {/* Cart Icon */}
               <button

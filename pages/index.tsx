@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/shared/Button";
 import Card from "@/components/shared/Card";
 import useFetch from "hooks/useFetch";
 import { Rocket, BarChart, ShieldCheck } from "lucide-react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useSession, signIn } from "next-auth/react";
 
 interface Book {
   key: string; // unique id
@@ -21,8 +22,14 @@ const HomePage = () => {
   const { data: initialData, loading } = useFetch<OpenLibraryResponse>(
     "https://openlibrary.org/search.json?q=fiction"
   );
-
   const [books, setBooks] = useState<Book[]>([]);
+  const { data: session } = useSession();
+  const userRole = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return session?.user?.role || localStorage.getItem("userRole");
+    }
+    return session?.user?.role || null;
+  }, [session]);
 
   useEffect(() => {
     if (initialData?.docs) {
@@ -103,11 +110,13 @@ const HomePage = () => {
                 First Published: {book.first_publish_year || "N/A"}
               </p>
               <div className="flex flex-col space-y-2 items-center">
-                <Button
-                  text="Delete"
-                  variant="danger"
-                  onClick={() => handleDelete(book.key)}
-                />
+                {userRole === "admin" && (
+                  <Button
+                    text="Delete"
+                    variant="danger"
+                    onClick={() => handleDelete(book.key)}
+                  />
+                )}
               </div>
             </motion.div>
           ))

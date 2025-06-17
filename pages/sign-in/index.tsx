@@ -1,43 +1,51 @@
 import { getCsrfToken, signIn, getSession } from "next-auth/react";
 import router from "next/router";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Button from "@/components/shared/Button";
 
 export default function SignIn({ csrfToken }: { csrfToken: string }) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-  const res = await signIn("credentials", {
-    redirect: false,
-    email,
-    password,
-  });
+    const onSubmit = async (data: { email: string; password: string }) => {
+        setError("");
 
-  if (res?.error) {
-    setError(res.error);
-  } else if (res?.ok) {
-    try {
-      const session = await getSession();
-      if (session?.user) {
-        localStorage.setItem("authToken", session.user.token || "");
-        localStorage.setItem("userRole", session.user.role || "");
-        alert("Successfully signed in!");
-        router.push("/");
-      } else {
-        setError("Could not retrieve session details.");
-      }
-    } catch (error) {
-      console.error("Error fetching session:", error);
-      setError("An error occurred while signing in.");
-    }
-  }
-};
+        const res = await signIn("credentials", {
+            redirect: false,
+            email: data.email,
+            password: data.password,
+        });
 
+        if (res?.error) {
+            setError(res.error);
+        } else if (res?.ok) {
+            try {
+                const session = await getSession();
+                if (session?.user) {
+                    localStorage.setItem("authToken", session.user.token || "");
+                    localStorage.setItem("userRole", session.user.role || "");
+                    alert("Successfully signed in!");
+                    router.push("/");
+                } else {
+                    setError("Could not retrieve session details.");
+                }
+            } catch (error) {
+                console.error("Error fetching session:", error);
+                setError("An error occurred while signing in.");
+            }
+        }
+    };
 
     return (
         <div className="bg-gradient-to-b from-white to-cream-50 min-h-screen flex flex-col items-center py-16 px-6">
@@ -61,21 +69,40 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
                         {error}
                     </div>
                 )}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    {/* Email Field */}
                     <input
                         type="email"
                         placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2 mb-4 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        {...register("email", { required: "Email is required" })}
+                        className={`w-full px-4 py-2 mb-4 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                            errors.email ? "border-red-500" : ""
+                        }`}
                     />
+                    {errors.email && (
+                        <p className="text-red-500 text-sm">{errors.email.message}</p>
+                    )}
+
+                    {/* Password Field */}
                     <input
                         type="password"
                         placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        {...register("password", {
+                            required: "Password is required",
+                            minLength: {
+                                value: 6,
+                                message: "Password must be at least 6 characters",
+                            },
+                        })}
+                        className={`w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                            errors.password ? "border-red-500" : ""
+                        }`}
                     />
+                    {errors.password && (
+                        <p className="text-red-500 text-sm">{errors.password.message}</p>
+                    )}
+
+                    {/* Submit Button */}
                     <div className="flex justify-end">
                         <Button
                             type="submit"

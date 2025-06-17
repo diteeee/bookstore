@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/shared/Button";
 import React, { useEffect, useMemo } from "react";
 import { useNewsContext } from "@/lib/contexts/NewsContext";
+import { useSession, signIn } from "next-auth/react";
 
 interface News {
   _id: string;
@@ -18,6 +19,13 @@ interface NewsPageProps {
 export default function NewsPage({ initialNews }: NewsPageProps) {
   const { news, setNews } = useNewsContext();
   const prefersReducedMotion = useReducedMotion();
+  const { data: session } = useSession();
+  const userRole = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return session?.user?.role || localStorage.getItem("userRole");
+    }
+    return session?.user?.role || null;
+  }, [session]);
 
   // Populate the context with server-side fetched data on mount
   useEffect(() => {
@@ -42,31 +50,35 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
             {post.body || "Description not available."}
           </p>
           <div className="flex flex-col space-y-2 items-center">
-            <Link href={`/update/news/${post._id}`} passHref legacyBehavior>
-              <a>
-                <Button text="Update" variant="tertiary" />
-              </a>
-            </Link>
-            <Button
-              text="Delete"
-              variant="danger"
-              onClick={async () => {
-                const confirmed = confirm("Do you want to delete news?");
-                if (!confirmed) return;
+            {userRole === "admin" && (
+              <Link href={`/update/news/${post._id}`} passHref legacyBehavior>
+                <a>
+                  <Button text="Update" variant="tertiary" />
+                </a>
+              </Link>
+            )}
+            {userRole === "admin" && (
+              <Button
+                text="Delete"
+                variant="danger"
+                onClick={async () => {
+                  const confirmed = confirm("Do you want to delete news?");
+                  if (!confirmed) return;
 
-                try {
-                  const res = await fetch(`/api/news/${post._id}`, {
-                    method: "DELETE",
-                  });
-                  if (!res.ok) throw new Error("Failed to delete news.");
-                  alert("News deleted successfully.");
-                  setNews((prev) => prev.filter((n) => n._id !== post._id));
-                } catch (error) {
-                  alert("Error deleting news.");
-                  console.error(error);
-                }
-              }}
-            />
+                  try {
+                    const res = await fetch(`/api/news/${post._id}`, {
+                      method: "DELETE",
+                    });
+                    if (!res.ok) throw new Error("Failed to delete news.");
+                    alert("News deleted successfully.");
+                    setNews((prev) => prev.filter((n) => n._id !== post._id));
+                  } catch (error) {
+                    alert("Error deleting news.");
+                    console.error(error);
+                  }
+                }}
+              />
+            )}
           </div>
         </motion.div>
       )),
@@ -92,9 +104,11 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
 
       {/* Add News Button */}
       <div className="mb-8">
-        <Link href="/create/news" passHref>
-          <Button text="Add News" variant="tertiary" />
-        </Link>
+        {userRole === "admin" && (
+          <Link href="/create/news" passHref>
+            <Button text="Add News" variant="tertiary" />
+          </Link>
+        )}
       </div>
 
       {/* News Content */}

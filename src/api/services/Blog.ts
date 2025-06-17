@@ -13,15 +13,16 @@ export async function createBlog(data: Blog) {
     return result;
 };
 
-export async function getBlogs() {
-    const client = await clientPromise;
-    const db = client.db("bookstore");
-    const blogs = await db
-        .collection("blogs")
-        .find()
-        .sort({ createdAt: -1 })
-        .toArray();
-    return blogs;
+export async function getBlogs(limit = 10) {
+  const client = await clientPromise;
+  const db = client.db("bookstore");
+  const blogs = await db
+    .collection("blogs")
+    .find({}, { projection: { title: 1, body: 1, createdAt: 1 } })  // Only return these fields
+    .sort({ createdAt: -1 })
+    .limit(limit) // limit number of returned blogs
+    .toArray();
+  return blogs;
 }
 
 export async function getBlog(id: string) {

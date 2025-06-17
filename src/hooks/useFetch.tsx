@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 
 function useFetch<T>(url: string) {
     const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // GET request on mount
+    // GET request on mount or when URL changes
     useEffect(() => {
-        if (!url) return; // Skip fetch if URL is null
+        if (!url) return;
         setLoading(true);
         fetch(url)
             .then((response) => {
@@ -16,18 +16,12 @@ function useFetch<T>(url: string) {
                 }
                 return response.json();
             })
-            .then((result) => {
-                setData(result);
-            })
-            .catch((err) => {
-                setError(err.message || "GET request failed");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            .then(setData)
+            .catch((err) => setError(err.message || "GET request failed"))
+            .finally(() => setLoading(false));
     }, [url]);
 
-    async function post<D>(payload: D) {
+    async function post<D>(payload: D): Promise<{ data?: T; error?: string }> {
         setLoading(true);
         setError(null);
         try {
@@ -36,16 +30,23 @@ function useFetch<T>(url: string) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
+
             const result = await res.json();
+            if (!res.ok) {
+                throw new Error(result.error || "POST request failed");
+            }
+
             setData(result);
+            return { data: result };
         } catch (err: any) {
             setError(err.message || "POST failed");
+            return { error: err.message };
         } finally {
             setLoading(false);
         }
     }
 
-    async function put<D>(payload: D) {
+    async function put<D>(payload: D): Promise<{ data?: T; error?: string }> {
         setLoading(true);
         setError(null);
         try {
@@ -54,28 +55,40 @@ function useFetch<T>(url: string) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
+
             const result = await res.json();
+            if (!res.ok) {
+                throw new Error(result.error || "PUT request failed");
+            }
+
             setData(result);
-            return result;
+            return { data: result };
         } catch (err: any) {
             setError(err.message || "PUT failed");
+            return { error: err.message };
         } finally {
             setLoading(false);
         }
     }
 
-    async function remove(customUrl?: string) {
+    async function remove(customUrl?: string): Promise<{ data?: T; error?: string }> {
         setLoading(true);
         setError(null);
         try {
             const res = await fetch(customUrl || url, {
                 method: "DELETE",
             });
+
             const result = await res.json();
+            if (!res.ok) {
+                throw new Error(result.error || "DELETE request failed");
+            }
+
             setData(result);
-            return result;
+            return { data: result };
         } catch (err: any) {
             setError(err.message || "DELETE failed");
+            return { error: err.message };
         } finally {
             setLoading(false);
         }

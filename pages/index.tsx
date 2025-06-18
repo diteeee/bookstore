@@ -1,18 +1,21 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/shared/Button";
 import Card from "@/components/shared/Card";
 import useFetch from "hooks/useFetch";
 import { Rocket, BarChart, ShieldCheck } from "lucide-react";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useSession, signIn } from "next-auth/react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 interface Book {
   key: string; // unique id
   title: string;
   author_name?: string[];
   first_publish_year?: number;
+  cover_i?: number; // cover ID for fetching the book cover
 }
 
 interface OpenLibraryResponse {
@@ -38,6 +41,40 @@ const HomePage = () => {
       setBooks(initialData.docs.slice(0, 20)); // Limit books to 20 for better performance
     }
   }, [initialData]);
+
+  const handleAddToCart = useCallback(
+    async (book: Book, coverUrl: string | null) => {
+      if (!session) {
+        alert("You must be logged in to add to cart");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: book.title,
+            authorName: book.author_name?.join(", ") || "Unknown Author",
+            bookId: book.key,
+            cover: coverUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to add to cart");
+        }
+
+        alert("Book added to cart successfully!");
+      } catch (error: any) {
+        alert(error.message);
+      }
+    },
+    [session]
+  );
 
   const handleDelete = (key: string) => {
     setBooks((prev) => prev.filter((book) => book.key !== key));
@@ -94,34 +131,55 @@ const HomePage = () => {
             <CircularProgress />
           </div>
         ) : (
-          books.map((book) => (
-            <motion.div
-              key={book.key}
-              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.3 }}
-            >
-              <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
-                {book.title}
-              </h2>
-              <p className="text-gray-500 mb-4 italic">
-                {book.author_name?.join(", ") || "Unknown Author"}
-              </p>
-              <p className="text-gray-600 text-sm mb-6">
-                First Published: {book.first_publish_year || "N/A"}
-              </p>
-              <div className="flex flex-col space-y-2 items-center">
-                {userRole === "admin" && (
-                  <Button
-                    text="Delete"
-                    variant="danger"
-                    onClick={() => handleDelete(book.key)}
+          books.map((book) => {
+            const coverUrl = book.cover_i
+              ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+              : "/default-cover.jpg";
+
+            return (
+              <motion.div
+                key={book.key}
+                className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center relative"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+              >
+                <div className="w-full h-64 relative mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src={coverUrl}
+                    alt={`Cover of ${book.title}`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    className="rounded-lg"
                   />
-                )}
-              </div>
-            </motion.div>
-          ))
+                </div>
+                <h2 className="text-lg font-serif font-bold text-gray-800 mb-3 line-clamp-2">
+                  {book.title}
+                </h2>
+                <p className="text-gray-500 mb-4 italic">
+                  {book.author_name?.join(", ") || "Unknown Author"}
+                </p>
+                <p className="text-gray-600 text-sm mb-6">
+                  First Published: {book.first_publish_year || "N/A"}
+                </p>
+                <div className="flex flex-col space-y-2 items-center">
+                  {userRole === "admin" && (
+                    <Button
+                      text="Delete"
+                      variant="danger"
+                      onClick={() => handleDelete(book.key)}
+                    />
+                  )}
+                </div>
+                <button
+                  className="absolute top-4 right-4 bg-blue-900 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition duration-300"
+                  onClick={() => handleAddToCart(book, coverUrl)}
+                >
+                  <ShoppingCartIcon />
+                </button>
+              </motion.div>
+            );
+          })
         )}
       </div>
 

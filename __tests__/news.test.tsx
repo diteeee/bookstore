@@ -1,3 +1,17 @@
+jest.mock("mongodb", () => {
+  return {
+    MongoClient: jest.fn().mockImplementation(() => ({
+      connect: jest.fn().mockResolvedValue(true),
+      db: jest.fn().mockReturnThis(),
+      collection: jest.fn().mockReturnThis(),
+      find: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+      insertOne: jest.fn().mockResolvedValue({ insertedId: "mockId" }),
+      close: jest.fn().mockResolvedValue(true),
+    })),
+  };
+});
+
+// Now import the code that uses MongoClient
 import handler from "../pages/api/news";
 import { createNews, getNews } from "@/api/services/News";
 

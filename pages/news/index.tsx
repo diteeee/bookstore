@@ -2,7 +2,7 @@ import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { motion, useReducedMotion } from "framer-motion";
 import Button from "@/components/shared/Button";
-import React, { useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNewsContext } from "@/lib/contexts/NewsContext";
 import { useSession, signIn } from "next-auth/react";
 
@@ -21,9 +21,16 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
   const prefersReducedMotion = useReducedMotion();
   const { data: session } = useSession();
 
-  // Safely retrieve the userRole with fallback
-  const userRole = useMemo(() => {
-    return session?.user?.role || localStorage.getItem("userRole") || null;
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Set userRole safely on client side
+  useEffect(() => {
+    if (session?.user?.role) {
+      setUserRole(session.user.role);
+    } else if (typeof window !== "undefined") {
+      const roleFromStorage = localStorage.getItem("userRole");
+      setUserRole(roleFromStorage);
+    }
   }, [session]);
 
   // Populate the context with server-side fetched data on mount

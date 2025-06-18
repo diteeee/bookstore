@@ -2,8 +2,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/shared/Button";
 import { BookOpen, User, Lock, ClipboardList, Settings } from "lucide-react";
+import { useRouter } from "next/router";
 
 const AboutPage = () => {
+  const router = useRouter();
+
   return (
     <div className="bg-gradient-to-b from-white to-blue-50 min-h-screen flex flex-col items-center py-16 px-6">
       {/* Hero Section */}
@@ -106,7 +109,7 @@ const AboutPage = () => {
         <Button
           text="View the Live App"
           variant="secondary"
-          onClick={() => alert("Redirecting to the live app...")}
+          onClick={() => router.push("https://bookstore-ecru-seven.vercel.app/")}
         />
       </motion.div>
     </div>

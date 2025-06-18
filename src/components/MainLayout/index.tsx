@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CartBar from "@/components/shared/CartBar";
+import CartIcon from "@/components/shared/CartIcon";
 
 interface Props {
   children?: React.ReactNode;
@@ -20,7 +20,7 @@ export function MainLayout(props: Props) {
       <Header />
       <main>{props.children}</main>
       <Footer />
-      <CartBar itemCount={cartItemCount} />
+      <CartIcon itemCount={cartItemCount} />
     </div>
   );
 }

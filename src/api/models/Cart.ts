@@ -4,6 +4,7 @@ export interface CartItem {
   bookKey: string; // Unique key of the book
   title: string;
   body: string;
+  cover: string,
   authorName?: string[];
   createdAt?: Date;
 }

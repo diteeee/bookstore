@@ -7,7 +7,7 @@ import Button from "@/components/shared/Button";
 export default function UpdateBlog() {
   const router = useRouter();
   const { id } = router.query;
-  const [newBlog, setNewBlog] = useState({ title: "", body: "" });
+  const [newBlog, setNewBlog] = useState({ title: "", body: "", cover: "" });
   const { data: existingBlog, loading, put } = useFetch<Blog>(`/api/blogs/${id}`); // Use Blog here
 
   useEffect(() => {
@@ -15,12 +15,13 @@ export default function UpdateBlog() {
       setNewBlog({
         title: existingBlog.title || "",
         body: existingBlog.body || "",
+        cover: existingBlog.cover || "",
       });
     }
   }, [existingBlog]);
 
   const handleUpdate = async () => {
-    if (!newBlog.title || !newBlog.body || !id) return;
+    if (!newBlog.title || !newBlog.body || !newBlog.cover || !id) return;
 
     try {
       const updatedBlog = await put(newBlog); // Log response to ensure update
@@ -62,6 +63,12 @@ export default function UpdateBlog() {
           placeholder="Content"
           value={newBlog.body}
           onChange={(e) => setNewBlog({ ...newBlog, body: e.target.value })}
+          className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 h-40 resize-none"
+        />
+        <textarea
+          placeholder="Image"
+          value={newBlog.cover}
+          onChange={(e) => setNewBlog({ ...newBlog, cover: e.target.value })}
           className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 h-40 resize-none"
         />
         <div className="flex justify-end">

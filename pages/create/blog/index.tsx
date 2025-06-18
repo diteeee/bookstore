@@ -6,14 +6,19 @@ import Button from "@/components/shared/Button";
 
 export default function CreateBlog() {
   const router = useRouter();
-  const [newBlog, setNewBlog] = useState({ title: "", body: "" });
+  const [newBlog, setNewBlog] = useState({ title: "", body: "", cover: "" });
   const { post } = useFetch<Blog[]>("/api/blogs");
 
   const handleCreate = async () => {
-    if (!newBlog.title || !newBlog.body) return;
-    await post(newBlog);
-    setNewBlog({ title: "", body: "" });
-    router.push("/blogs");
+    console.log("Submitting Blog:", newBlog); // Log the blog data for debugging
+    if (!newBlog.title || !newBlog.body || !newBlog.cover) return;
+    try {
+      await post(newBlog);
+      setNewBlog({ title: "", body: "", cover: "" });
+      router.push("/blogs");
+    } catch (error) {
+      console.error("Error submitting blog:", error);
+    }
   };
 
   return (
@@ -44,6 +49,12 @@ export default function CreateBlog() {
           placeholder="Content"
           value={newBlog.body}
           onChange={(e) => setNewBlog({ ...newBlog, body: e.target.value })}
+          className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 h-40 resize-none"
+        />
+        <textarea
+          placeholder="Image URL"
+          value={newBlog.cover}
+          onChange={(e) => setNewBlog({ ...newBlog, cover: e.target.value })}
           className="w-full px-4 py-2 mb-6 border rounded-lg placeholder-gray-400 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 h-40 resize-none"
         />
         <div className="flex justify-end">

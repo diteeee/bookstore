@@ -2,13 +2,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@/components/shared/Button";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 interface CartItem {
   _id?: string;
-  source: string; // "openLibrary" or "database"
   title: string;
   body: string;
+  cover: string; // URL for the book cover
   authorName?: string | string[];
   bookKey?: string;
 }
@@ -17,30 +18,31 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchCartItems = async () => {
-    try {
-      const response = await fetch("/api/cart", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch("/api/cart", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
 
-      if (!response.ok) throw new Error("Failed to fetch cart items");
+        if (!response.ok) throw new Error("Failed to fetch cart items");
 
-      const data = await response.json();
-      setCartItems(data);
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  fetchCartItems();
-}, []);
+        const data = await response.json();
+        setCartItems(data);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-console.log("cart items: ", cartItems);
+    fetchCartItems();
+  }, []);
+
+  console.log("cart: ", cartItems);
+
   const handleRemoveFromCart = async (id: string) => {
     const confirmed = confirm("Do you want to remove this item from the cart?");
     if (!confirmed) return;
@@ -81,6 +83,23 @@ console.log("cart items: ", cartItems);
               key={item._id}
               className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col text-center"
             >
+              {/* Book Cover */}
+              <div className="w-full h-64 relative mb-4 rounded-lg overflow-hidden">
+                {item.cover ? (
+                  <Image
+                    src={item.cover}
+                    alt={`Cover of ${item.title}`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    className="rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-lg">
+                    No Cover Available
+                  </div>
+                )}
+              </div>
+              {/* Book Details */}
               <h2 className="text-lg font-serif font-bold text-gray-800 mb-3">
                 {item.title}
               </h2>

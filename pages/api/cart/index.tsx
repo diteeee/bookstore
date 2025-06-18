@@ -30,13 +30,14 @@ export default async function handler(
       }
 
       case "POST": {
-        const { title, authorName, body, bookKey, bookId } = req.body;
+        const { title, authorName, body, cover, bookKey, bookId } = req.body;
 
         const newItem = await cartCollection.insertOne({
           userId,
           title,
           authorName,
           body,
+          cover,
           bookKey: bookKey || null,
           bookId: bookId || null,
           createdAt: new Date(),

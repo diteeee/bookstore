@@ -16,6 +16,9 @@ Projekti eshte ndertuar me React, Next.js, Tailwind CSS, perdor API-n e OpenLibr
 
 ---
 
+## Link i aplikacionit
+   ```https://bookstore-delta-bay.vercel.app/```
+
 ## 🛠 Udhëzime Instalimi
 
 1. Klono projektin:

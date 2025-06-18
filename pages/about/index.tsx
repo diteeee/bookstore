@@ -106,11 +106,6 @@ const AboutPage = () => {
           For inquiries, reach out at <a href="mailto:dq66228@ubt-uni.net" className="text-blue-600 hover:underline">dq66228@ubt-uni.net</a>. 
           A special thanks to Prof. Cand. PhD. Vesa Morina for the guidance provided throughout this journey.
         </p>
-        <Button
-          text="View the Live App"
-          variant="secondary"
-          onClick={() => router.push("https://bookstore-ecru-seven.vercel.app/")}
-        />
       </motion.div>
     </div>
   );

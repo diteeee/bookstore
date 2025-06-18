@@ -24,25 +24,35 @@ Projekti eshte ndertuar me React, Next.js, Tailwind CSS, perdor API-n e OpenLibr
 ## 🛠 Udhëzime Instalimi
 
 1. Klono projektin:
-   ```git clone https://github.com/diteeee/bookstore.git```
+   ```
+   git clone https://github.com/diteeee/bookstore.git
+   ```
    
-2. Hyni ne dosjen e projektit:
-   ```cd bookstore```
+3. Hyni ne dosjen e projektit:
+   ```
+   cd bookstore
+   ```
 
-3. Instaloni dependencies
-   ```npm install```
+5. Instaloni dependencies
+   ```
+   npm install
+   ```
 
-4. Krijoni nje file .env.local ne root te projektit me keto variable
+7. Krijoni nje file .env.local ne root te projektit me keto variable
    ```
    MONGODB_URI=mongodb+srv://dita:twjHv1t6QSUagh9d@cluster0.5l2nrgo.mongodb.net
    API_URL=http://localhost:3000
    NEXTAUTH_SECRET=DciNpsm7c//nwW4+SFZYYq1fW0WTXX+ixTLKmWUJ7BM=```
 
-5. Start serverin
-   ```npm run dev```
+8. Start serverin
+   ```
+   npm run dev
+   ```
 
-6. Hap web browser ne adresen
-   ```http://localhost:3000```
+10. Hap web browser ne adresen
+   ```
+   http://localhost:3000
+   ```
 
 
 ## Screenshots

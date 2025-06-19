@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 interface Book {
-  key: string; // e.g. "OL12345W"
+  key: string;
   title: string;
   author_name?: string[];
   first_publish_year?: number;
@@ -72,7 +72,7 @@ export default function BlogsSSG({ books }: BlogsSSGProps) {
             title: book.title,
             authorName: book.author_name?.join(", ") || "Unknown Author",
             bookId: book.key,
-            cover: coverUrl, // Pass coverUrl here
+            cover: coverUrl,
           }),
         });
 
@@ -135,7 +135,7 @@ export default function BlogsSSG({ books }: BlogsSSGProps) {
             </div>
             <button
               className="absolute top-4 right-4 bg-blue-900 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition duration-300"
-              onClick={() => handleAddToCart(book, coverUrl)} // Pass coverUrl here
+              onClick={() => handleAddToCart(book, coverUrl)}
             >
               <ShoppingCartIcon />
             </button>

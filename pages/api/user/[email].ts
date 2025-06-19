@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Email is required" });
   }
 
-  // Protect route: only admin can update/delete users
   const session = await getServerSession(req, res, authOptions);
   if (!session || !session.user || session.user.role !== "admin") {
     return res.status(403).json({ error: "Forbidden" });

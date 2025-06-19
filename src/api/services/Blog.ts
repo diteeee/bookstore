@@ -25,9 +25,9 @@ export async function getBlogs(limit = 10) {
   const db = client.db("bookstore");
   const blogs = await db
     .collection("blogs")
-    .find({}, { projection: { title: 1, body: 1, cover: 1, createdAt: 1 } })  // Only return these fields
+    .find({}, { projection: { title: 1, body: 1, cover: 1, createdAt: 1 } })
     .sort({ createdAt: -1 })
-    .limit(limit) // limit number of returned blogs
+    .limit(limit)
     .toArray();
   return blogs;
 }

@@ -1,5 +1,3 @@
-// pages/api/auth/[...nextauth].ts
-
 import { getUser } from "@/api/services/User";
 import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
@@ -31,13 +29,12 @@ export const authOptions = {
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) throw new Error("Fjalëkalimi nuk është i saktë");
 
-        // Return user data along with a mock token
         return {
           id: user._id.toString(),
           email: user.email,
-          role: user.role, // <-- add role here
+          role: user.role,
           emailVerified: user.emailVerified ?? null,
-          token: `mock-token-${user._id}` // Replace with actual token if available
+          token: `mock-token-${user._id}`
         };
       },
     }),

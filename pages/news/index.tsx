@@ -23,7 +23,6 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
 
   const [userRole, setUserRole] = useState<string | null>(null);
 
-  // Set userRole safely on client side
   useEffect(() => {
     if (session?.user?.role) {
       setUserRole(session.user.role);
@@ -33,12 +32,10 @@ export default function NewsPage({ initialNews }: NewsPageProps) {
     }
   }, [session]);
 
-  // Populate the context with server-side fetched data on mount
   useEffect(() => {
     setNews(initialNews);
   }, [initialNews, setNews]);
 
-  // Memoized news cards
   const newsCards = useMemo(
     () =>
       news.map((post) => (

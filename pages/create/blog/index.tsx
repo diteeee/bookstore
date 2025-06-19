@@ -10,7 +10,7 @@ export default function CreateBlog() {
   const { post } = useFetch<Blog[]>("/api/blogs");
 
   const handleCreate = async () => {
-    console.log("Submitting Blog:", newBlog); // Log the blog data for debugging
+    console.log("Submitting Blog:", newBlog);
     if (!newBlog.title || !newBlog.body || !newBlog.cover) return;
     try {
       await post(newBlog);

@@ -1,13 +1,11 @@
 import { MongoClient } from "mongodb";
 
 declare global {
-  // For Next.js hot reloads — to avoid multiple clients
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 const uri = process.env.MONGODB_URI as string;
 
-// Append options if not present (optional, but recommended)
 const options = {
   // You can add options here if needed
 };

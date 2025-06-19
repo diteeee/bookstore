@@ -1,4 +1,3 @@
-// pages/dashboard.tsx
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import {
@@ -12,7 +11,7 @@ import {
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar collapsed on mobile by default
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
     { name: "Home", icon: HomeIcon, href: "/" },

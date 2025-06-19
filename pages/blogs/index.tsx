@@ -11,7 +11,7 @@ interface Blog {
   _id: string;
   title: string;
   body: string;
-  cover: string; // Added cover attribute
+  cover: string;
 }
 
 export default function BlogsDB() {
@@ -47,7 +47,7 @@ export default function BlogsDB() {
           title: post.title,
           body: post.body,
           bookId: post._id,
-          cover: post.cover, // Include cover in the payload
+          cover: post.cover,
         }),
       });
 

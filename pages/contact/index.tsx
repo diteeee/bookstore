@@ -22,15 +22,15 @@ const ContactPage = () => {
 
   emailjs
     .send(
-      "service_erwa8rf", // Replace with your EmailJS service ID
-      "template_juz01dr", // Replace with your EmailJS template ID
-      formData, // Use formData directly
-      "2idW1OYVOZZjTPYZw" // Replace with your EmailJS public key
+      "service_erwa8rf",
+      "template_juz01dr",
+      formData,
+      "2idW1OYVOZZjTPYZw"
     )
     .then(
       (response) => {
         alert("Message sent successfully!");
-        setFormData({ name: "", email: "", message: "" }); // Reset form
+        setFormData({ name: "", email: "", message: "" });
       },
       (error) => {
         console.error("Error sending message:", error);

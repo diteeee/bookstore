@@ -11,11 +11,11 @@ import { useRouter } from "next/router";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 interface Book {
-  key: string; // unique id
+  key: string;
   title: string;
   author_name?: string[];
   first_publish_year?: number;
-  cover_i?: number; // cover ID for fetching the book cover
+  cover_i?: number;
 }
 
 interface OpenLibraryResponse {
@@ -38,7 +38,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (initialData?.docs) {
-      setBooks(initialData.docs.slice(0, 20)); // Limit books to 20 for better performance
+      setBooks(initialData.docs.slice(0, 20));
     }
   }, [initialData]);
 

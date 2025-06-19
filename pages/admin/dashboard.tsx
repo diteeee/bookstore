@@ -30,7 +30,6 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  // Sync userRole from session or localStorage
   useEffect(() => {
     if (session?.user?.role) {
       setUserRole(session.user.role);

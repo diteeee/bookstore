@@ -8,7 +8,7 @@ export default function UpdateBlog() {
   const router = useRouter();
   const { id } = router.query;
   const [newBlog, setNewBlog] = useState({ title: "", body: "", cover: "" });
-  const { data: existingBlog, loading, put } = useFetch<Blog>(`/api/blogs/${id}`); // Use Blog here
+  const { data: existingBlog, loading, put } = useFetch<Blog>(`/api/blogs/${id}`);
 
   useEffect(() => {
     if (existingBlog) {
@@ -24,7 +24,7 @@ export default function UpdateBlog() {
     if (!newBlog.title || !newBlog.body || !newBlog.cover || !id) return;
 
     try {
-      const updatedBlog = await put(newBlog); // Log response to ensure update
+      const updatedBlog = await put(newBlog);
       console.log("Updated book: ", updatedBlog);
       router.push("/blogs");
     } catch (error) {

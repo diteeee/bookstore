@@ -23,7 +23,7 @@ export default function SignUp() {
     const { data: userData, error } = await post(data);
 
     if (error) {
-        alert(error); // Show server-provided or default error message
+        alert(error);
     } else {
         alert("Registration successful!");
         router.push("/sign-in");

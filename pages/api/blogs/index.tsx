@@ -9,7 +9,6 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const newBlog = req.body;
-      console.log("New Blog Data:", newBlog);
 
       if (!newBlog.cover) {
         return res.status(400).json({ message: "Cover image is required" });

@@ -18,7 +18,7 @@ export default async function handler(
         try {
             const newNews = req.body;
             const result = await updateNews(req.query.id as string, newNews);
-            res.status(200).json(result); // Use 200 for updates
+            res.status(200).json(result);
         } catch (error) {
             res.status(500).json(error);
         }

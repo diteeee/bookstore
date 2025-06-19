@@ -5,7 +5,6 @@ function useFetch<T>(url: string) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // GET request on mount or when URL changes
     useEffect(() => {
         if (!url) return;
         setLoading(true);

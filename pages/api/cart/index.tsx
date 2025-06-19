@@ -14,7 +14,7 @@ export default async function handler(
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const userId = session.user.id; // adjust if your session has different user structure
+  const userId = session.user.id;
   const client = await clientPromise;
   const db = client.db("bookstore");
   const cartCollection = db.collection("cart");

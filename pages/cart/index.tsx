@@ -9,7 +9,7 @@ interface CartItem {
   _id?: string;
   title: string;
   body: string;
-  cover: string; // URL for the book cover
+  cover: string;
   authorName?: string | string[];
   bookKey?: string;
 }

@@ -10,8 +10,8 @@ interface Book {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [], // no pre-rendered paths
-    fallback: "blocking", // generate on first request
+    paths: [],
+    fallback: "blocking",
   };
 };
 
@@ -40,7 +40,6 @@ export default function BookPage({ book, id }: { book: Book; id: string }) {
       ? book.description
       : book.description?.value || "No description available.";
 
-  // Use the first available cover ID from the covers array
   const coverId = book.covers?.[0];
   const coverUrl = coverId
     ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`

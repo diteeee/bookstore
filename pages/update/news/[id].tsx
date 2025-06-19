@@ -23,7 +23,7 @@ export default function UpdateNews() {
     if (!newNews.title || !newNews.body || !id) return;
 
     try {
-      const updatedNews = await put(newNews); // Log response to ensure update
+      const updatedNews = await put(newNews);
       console.log("Updated News: ", updatedNews);
       router.push("/news");
     } catch (error) {

@@ -13,11 +13,11 @@ const Button = (props: Props) => {
   const { text, onClick, variant = "primary", size = "default", type = "button" } = props;
 
   const buttonStyles = {
-    primary: "bg-emerald-700 hover:bg-emerald-800 text-white", // Deep green for primary actions
-    secondary: "bg-slate-600 hover:bg-slate-700 text-white", // Calm slate blue for secondary actions
-    tertiary: "bg-gray-200 hover:bg-gray-300 text-gray-800", // Warm beige for tertiary actions
-    quaternary: "bg-olive-500 hover:bg-olive-600 text-white", // Muted olive for quaternary actions
-    danger: "bg-rose-600 hover:bg-rose-700 text-white", // Rust red for errors
+    primary: "bg-emerald-700 hover:bg-emerald-800 text-white",
+    secondary: "bg-slate-600 hover:bg-slate-700 text-white",
+    tertiary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+    quaternary: "bg-olive-500 hover:bg-olive-600 text-white",
+    danger: "bg-rose-600 hover:bg-rose-700 text-white",
   };
 
   const sizeStyles = {

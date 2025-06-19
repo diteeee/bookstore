@@ -10,7 +10,7 @@ const CartIcon: React.FC<CartIconProps> = ({ itemCount }) => {
   const router = useRouter();
 
   const handleCartClick = () => {
-    router.push("/cart"); // Navigate to the cart page
+    router.push("/cart");
   };
 
   return (

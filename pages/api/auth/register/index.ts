@@ -23,7 +23,7 @@ export default async function handler(
             name,
             email,
             password: hashedPassword,
-            role: "user",  // Assign default role here
+            role: "user",
             createdAt: new Date(),
         };
         
